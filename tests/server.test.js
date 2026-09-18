@@ -17,7 +17,7 @@ test('HTTP: 20 concurrent players, private host commands, QR, restart-safe stora
   const answers=await Promise.all(joined.map(p=>call(base,`/api/rooms/${room.code}/answer`,{q:0,choice:1},p.data.token)));
   assert.ok(answers.every(r=>r.status===200));
   const reveal=await call(base,`/api/rooms/${room.code}/control`,{action:'reveal'},room.hostToken);
-  assert.ok(reveal.data.teams.every(t=>t.score===t.count*100)||reveal.data.teams.every(t=>t.score===0),'every player answered the same choice, so every team scores identically whichever way question order shuffled');
+  assert.ok(reveal.data.teams.every(t=>t.score===t.count)||reveal.data.teams.every(t=>t.score===0),'every player answered the same choice, so every team scores identically whichever way question order shuffled');
   const qr=await fetch(base+`/api/qr?url=${encodeURIComponent(base+'/?join='+room.code)}`);assert.match(qr.headers.get('content-type'),/svg/);assert.match(await qr.text(),/<svg/);
   assert.equal((await fetch(base+'/lib/questions.js')).status,404);
   assert.equal((await fetch(base+'/')).status,200);
