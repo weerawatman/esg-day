@@ -44,9 +44,34 @@ Vercel เป็น serverless (ไม่มีหน่วยความจำ
 | `ADMIN_PASSWORD` | รหัสผ่านหน้าจัดการคำถาม (`/?admin`) — บน Vercel ต้องตั้งค่านี้เอง ไม่มีการสุ่มรหัสชั่วคราวให้เหมือนตอนรันในเครื่อง |
 | `PUBLIC_URL` (ถ้ามีโดเมนของตัวเอง) | เช่น `https://esg-day.example.com` ไม่ตั้งก็ได้ ระบบจะใช้โดเมน Vercel ของดีพลอยเมนต์นั้นแทน |
 
-ตารางฐานข้อมูลที่ต้องมี (สร้างให้แล้วในโปรเจกต์ Supabase ที่เชื่อมไว้): `rooms(code, data, version)` และ `question_bank(id, data)` ทั้งสองตารางเปิด Row Level Security โดยไม่มี policy ให้ role `anon`/`authenticated` เข้าถึง — เข้าถึงได้เฉพาะฝั่งเซิร์ฟเวอร์ผ่าน service_role key เท่านั้น
-
 เพิ่มตัวแปรแล้วต้อง **Redeploy** อีกครั้ง (ตัวแปรจะมีผลกับดีพลอยเมนต์ใหม่เท่านั้น)
+
+### ตารางใน Supabase
+
+ทุกตารางเปิด Row Level Security โดยไม่มี policy ให้ role `anon`/`authenticated` — เข้าถึงได้เฉพาะฝั่งเซิร์ฟเวอร์ผ่าน service_role key เท่านั้น ไม่มีตัวไหนถูกอ่านกลับโดยแอป (เป็นข้อมูลไว้ให้ผู้ดูแลสืบค้นเองใน Supabase)
+
+| ตาราง | ใช้ทำอะไร |
+|---|---|
+| `rooms(code, data, version)` | สถานะห้องทั้งหมดที่เกมใช้เล่นจริง (`data` คือ JSON ก้อนเดียวที่มีผู้เล่น/คำตอบ/คะแนน) — **แหล่งข้อมูลจริงของเกม** แต่อ่านตรง ๆ ยาก เพราะซ้อนอยู่ใน JSON |
+| `question_bank(id, data)` | ชุดคำถาม 10 ข้อที่แก้ผ่านหน้า `/?admin` เก็บไว้แถวเดียว ใช้ตอนสร้างห้องใหม่เท่านั้น ไม่เกี่ยวกับผลการเล่น |
+| `players(room_code, employee_id, name, team_id, team_name, score, bot)` | **มิเรอร์ไว้อ่านง่าย**: ใครอยู่ห้องไหน ทีมอะไร คะแนนรวมเท่าไร อัปเดตทุกครั้งที่มีคนเข้าร่วม/ตอบ/คะแนนเปลี่ยน |
+| `answers(room_code, employee_id, question_id, choice, correct, voided)` | **มิเรอร์ไว้อ่านง่าย**: แต่ละคนตอบข้อไหนว่าอะไร ถูกหรือผิด ข้อนั้นถูกยกเลิกหรือไม่ |
+| `team_scores` (view) | รวมคะแนน+จำนวนคนต่อทีมจากตาราง `players` ให้อัตโนมัติ ไม่ต้องคำนวณเอง |
+
+ตัวอย่างคำสั่งดูผลใน SQL Editor ของ Supabase:
+
+```sql
+-- ใครอยู่ทีมไหนในห้อง 123456 พร้อมคะแนน
+select employee_id, name, team_name, score from players where room_code = '123456' order by team_name, score desc;
+
+-- คะแนนรวมแต่ละทีมในห้อง 123456
+select * from team_scores where room_code = '123456' order by total_score desc;
+
+-- ใครตอบข้อ 3 (question_id เริ่มที่ 0) ผิดบ้าง
+select employee_id from answers where room_code = '123456' and question_id = 2 and correct = false and voided = false;
+```
+
+`players`/`answers` เป็นตารางมิเรอร์ที่แอปเขียนฝ่ายเดียว ไม่ได้อ่านย้อนกลับมาใช้เล่นเกม ถ้าเขียนไม่สำเร็จชั่วคราว (เช่นเน็ตสะดุด) จะไม่กระทบผู้เล่น แค่ข้อมูลในตารางนี้อาจตามหลังเล็กน้อยแล้ว sync ใหม่ในรอบถัดไป
 
 ### ข้อจำกัดบน Vercel
 

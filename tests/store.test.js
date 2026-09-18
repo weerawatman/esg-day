@@ -74,6 +74,21 @@ test('withRoom persists a change on the first attempt when nobody else is writin
  assert.equal(result,'done');
  assert.deepEqual(client.rooms['111111'],{data:{score:2},version:1});
 });
+test('withRoom calls the optional sync hook after a real save, but never when nothing changed',async()=>{
+ const client=fakeClient({rooms:{'111111':{data:{score:1},version:0}}});
+ const calls=[];
+ const store=createRoomStore(client,{sync:async(code,data)=>calls.push([code,data])});
+ await store.withRoom('111111',rooms=>rooms['111111'].score);
+ assert.deepEqual(calls,[],'no write happened, so reporting has nothing new to mirror');
+ await store.withRoom('111111',rooms=>{rooms['111111'].score=9});
+ assert.equal(calls.length,1);assert.equal(calls[0][0],'111111');assert.deepEqual(calls[0][1],{score:9});
+});
+test('withRoom swallows a sync failure instead of failing the caller\'s request',async()=>{
+ const client=fakeClient({rooms:{'111111':{data:{score:1},version:0}}});
+ const store=createRoomStore(client,{sync:async()=>{throw new Error('reporting db down')}});
+ const result=await store.withRoom('111111',rooms=>{rooms['111111'].score=2;return 'ok'});
+ assert.equal(result,'ok');
+});
 test('withRoom transparently retries past one concurrent writer stealing the version first',async()=>{
  const rooms={'111111':{data:{score:1},version:0}};
  let sabotaged=false;
