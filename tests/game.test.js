@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game } from '../lib/game.js';
+import { questions } from '../lib/questions.js';
 function setup(n=20){let now=1000;const game=new Game({now:()=>now,choose:n=>n-1});const room=game.create();const players=Array.from({length:n},(_,i)=>game.join(room.code,`ผู้เล่น ${i+1}`,`EMP${i+1}`));const tick=ms=>now+=ms;const start=()=>{game.control(room.code,room.hostToken,'start');tick(3000)};return {game,room,players,tick,start}}
 test('20 employees randomized among minimum-size teams, yielding 7/7/6; unique IDs and roster locking',()=>{
  const {game,room,players,start}=setup();assert.equal(players[0].team,2,'choose random tie result instead of first team');assert.deepEqual([0,1,2].map(t=>players.filter(p=>p.team===t).length).sort(),[6,7,7]);
@@ -31,6 +32,15 @@ test('void awards zero and exposes no further scoring path',()=>{
 });
 test('legacy four-team room retains 12-question rules and original score denominator',()=>{
  const r={code:'123456',hostToken:'host',phase:'finished',q:11,players:[{id:'one',token:'player',name:'A',team:3,score:1600}],answers:{},voided:[],deadline:0};const game=new Game({rooms:{'123456':r}});const v=game.view('123456');assert.equal(v.total,12);assert.equal(v.teams.length,4);assert.equal(v.teams[3].percent,100);assert.equal(v.question.id,11);
+});
+test('each new room shuffles questions within their round only, keeping round/points fixed and id matching position',()=>{
+ const identity=new Game({choose:n=>n-1}),idRoom=identity.create(),same=identity.rooms[idRoom.code].rules.questions;
+ assert.deepEqual(same.map(q=>q.text),questions.map(q=>q.text),'choose:n=>n-1 leaves Fisher-Yates a no-op, so order should match the source file');
+ const shuffled=new Game({choose:()=>0}),room=shuffled.create(),qs=shuffled.rooms[room.code].rules.questions;
+ assert.deepEqual(qs.map(q=>q.round),[1,1,1,1,2,2,2,2,3,3]);assert.deepEqual(qs.map(q=>q.points),[100,100,100,100,100,100,100,100,200,200]);
+ qs.forEach((q,i)=>assert.equal(q.id,i));
+ const expected=[1,2,3,0,5,6,7,4,9,8].map(i=>questions[i].text);
+ assert.deepEqual(qs.map(q=>q.text),expected,'choose:()=>0 always swaps toward index 0, rotating each round group by one');
 });
 test('lost join response can be retried with a pre-existing random request token, including after start',()=>{
  const {game,room}=setup(3),key='a'.repeat(48);
