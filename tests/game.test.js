@@ -42,6 +42,12 @@ test('each new room shuffles questions within their round only, keeping round/po
  const expected=[1,2,3,0,5,6,7,4,9,8].map(i=>questions[i].text);
  assert.deepEqual(qs.map(q=>q.text),expected,'choose:()=>0 always swaps toward index 0, rotating each round group by one');
 });
+test('an injected question bank (as the admin editor swaps in) feeds straight into freshly created rooms',()=>{
+ const customBank=questions.map(q=>q.id===0?{...q,text:'แก้ไขคำถามข้อ 1',options:['ก','ข','ค','ง'],correct:3,explanation:'อธิบายใหม่'}:q);
+ const game=new Game({choose:n=>n-1,questions:()=>customBank});
+ const q0=game.rooms[game.create().code].rules.questions[0];
+ assert.equal(q0.text,'แก้ไขคำถามข้อ 1');assert.deepEqual(q0.options,['ก','ข','ค','ง']);assert.equal(q0.correct,3);assert.equal(q0.explanation,'อธิบายใหม่');
+});
 test('lost join response can be retried with a pre-existing random request token, including after start',()=>{
  const {game,room}=setup(3),key='a'.repeat(48);
  const first=game.join(room.code,'ใหม่','EMP100',false,key);

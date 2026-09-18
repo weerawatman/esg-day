@@ -8,10 +8,11 @@ const teamInfo=[{name:'SHIELD',thai:'ทีมโล่สายแกร่ง'
 const roundNames=['อุ่นเครื่องเรื่องข้อมูล','จับให้ทันภัยใกล้ตัว','สองข้อชี้ชะตา'];
 let config={},state=null,selected=null,selectedQ=-1,lastSignature='',busy=false,offset=0,polling=false,lastTick='',lastEffect='';
 const params=new URLSearchParams(location.search);
-const mode=params.has('host')?'host':params.has('screen')?'screen':params.has('join')?'player':'home';
+const mode=params.has('host')?'host':params.has('screen')?'screen':params.has('join')?'player':params.has('admin')?'admin':'home';
 const code=params.get('host')||params.get('screen')||params.get('join');
-let credential=code?localStorage.getItem(`dg:${mode}:${code}`):null;
+let credential=code?localStorage.getItem(`dg:${mode}:${code}`):mode==='admin'?localStorage.getItem('dg:admin'):null;
 const isHost=()=>mode==='host';
+let bank=null;
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('visible');setTimeout(()=>$('#toast').classList.remove('visible'),4500)}
 async function api(path,body){
  const res=await fetch(path,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(credential?{Authorization:`Bearer ${credential}`}:{})},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(8000)});
@@ -20,7 +21,7 @@ async function api(path,body){
 function connection(ok){$('#connection').innerHTML=`<i class="${ok?'':'offline'}"></i> ${ok?'เชื่อมต่อแล้ว':'กำลังเชื่อมต่อใหม่…'}`}
 function home(){
  const recent=localStorage.getItem('dg:lastHost');
- app.innerHTML=`<section class="hero live-hero"><div class="hero-copy"><div class="eyebrow"><span class="live-dot"></span> THE LIVE TEAM QUIZ</div><h1>คิดให้ทัน.<br>ตอบให้เป๊ะ.<br><span class="accent">พาทีมขึ้นแท่น!</span></h1><p class="lead">10 คำถามเรื่องข้อมูล ที่จะทำให้ทั้งห้องลุ้นไปด้วยกัน<br>ลงชื่อ สุ่มทีม แล้วมาปล่อยพลังความรู้!</p><div class="hero-actions"><button class="primary" data-action="create">เปิดห้องกิจกรรม ↗</button><button class="secondary" data-action="demo">ลองเล่นโหมดสาธิต ▷</button></div><p class="micro">สำหรับผู้ดำเนินกิจกรรม${recent?` · <a href="/?host=${esc(recent)}">กลับห้องล่าสุด</a>`:''}</p><div class="facts"><div><b>03</b><span>ทีมสุ่มอัตโนมัติ</span></div><div><b>10</b><span>คำถาม ช่วยกันคิด</span></div><div><b>×2</b><span>คะแนนสองข้อสุดท้าย</span></div></div></div><div class="quiz-poster"><div class="poster-head"><span class="live-dot"></span> DATA GUARDIANS <span>LIVE!</span></div><div class="poster-question"><span>READY, TEAM?</span><h2>ข้อมูลปลอดภัย<br>เริ่มที่ใคร?</h2><div class="poster-clock">20<small>วินาที</small></div></div><div class="poster-answers">${['ทุกคนในทีม!','คนที่ส่งอีเมล','เฉพาะฝ่าย IT','ระบบจัดการให้'].map((s,i)=>`<div class="choice-${i}"><b>${shapes[i]}</b>${s}</div>`).join('')}</div><div class="poster-teams">${teamInfo.map(t=>`<span style="--team:${t.color}">${icon(t.symbol)} ${t.name}</span>`).join('')}</div><div class="poster-sticker">คิดด้วยกัน<br><b>ลุ้นด้วยกัน!</b></div></div></section>
+ app.innerHTML=`<section class="hero live-hero"><div class="hero-copy"><div class="eyebrow"><span class="live-dot"></span> THE LIVE TEAM QUIZ</div><h1>คิดให้ทัน.<br>ตอบให้เป๊ะ.<br><span class="accent">พาทีมขึ้นแท่น!</span></h1><p class="lead">10 คำถามเรื่องข้อมูล ที่จะทำให้ทั้งห้องลุ้นไปด้วยกัน<br>ลงชื่อ สุ่มทีม แล้วมาปล่อยพลังความรู้!</p><div class="hero-actions"><button class="primary" data-action="create">เปิดห้องกิจกรรม ↗</button><button class="secondary" data-action="demo">ลองเล่นโหมดสาธิต ▷</button></div><p class="micro">สำหรับผู้ดำเนินกิจกรรม${recent?` · <a href="/?host=${esc(recent)}">กลับห้องล่าสุด</a>`:''} · <a href="/?admin">จัดการคำถาม</a></p><div class="facts"><div><b>03</b><span>ทีมสุ่มอัตโนมัติ</span></div><div><b>10</b><span>คำถาม ช่วยกันคิด</span></div><div><b>×2</b><span>คะแนนสองข้อสุดท้าย</span></div></div></div><div class="quiz-poster"><div class="poster-head"><span class="live-dot"></span> DATA GUARDIANS <span>LIVE!</span></div><div class="poster-question"><span>READY, TEAM?</span><h2>ข้อมูลปลอดภัย<br>เริ่มที่ใคร?</h2><div class="poster-clock">20<small>วินาที</small></div></div><div class="poster-answers">${['ทุกคนในทีม!','คนที่ส่งอีเมล','เฉพาะฝ่าย IT','ระบบจัดการให้'].map((s,i)=>`<div class="choice-${i}"><b>${shapes[i]}</b>${s}</div>`).join('')}</div><div class="poster-teams">${teamInfo.map(t=>`<span style="--team:${t.color}">${icon(t.symbol)} ${t.name}</span>`).join('')}</div><div class="poster-sticker">คิดด้วยกัน<br><b>ลุ้นด้วยกัน!</b></div></div></section>
  <section class="join-strip"><div><span class="eyebrow">GOT A GAME PIN?</span><h2>ห้องพร้อม ทีมรออยู่!</h2><p>สแกน QR ที่จอกลาง หรือกรอกรหัสห้องเพื่อเข้าเล่น</p></div><form id="room-form"><label for="room-code">รหัสห้อง 6 หลัก</label><div class="inline"><input id="room-code" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required autocomplete="off"><button class="primary" type="submit">เข้าเล่น →</button></div></form></section>
  <section class="round-section"><div class="section-heading"><div><span class="eyebrow">WARM UP. LEVEL UP. TEAM UP.</span><h2>ยิ่งเล่น ยิ่งลุ้น</h2></div><button class="text-button" data-action="rules">กติกาแบบไว ๆ ↗</button></div><div class="round-grid">${roundNames.map((name,i)=>`<article class="round-card"><span class="round-num">0${i+1}</span><div><small>${['DATA GOVERNANCE','DATA SECURITY','DOUBLE POINTS'][i]}</small><h3>${name}</h3><p>${['ข้อมูลดีเป็นแบบไหน? ใครเป็นคนดูแล?<br>เริ่มจากเรื่องใกล้ตัวที่ทุกคนตอบได้','อีเมลหลอก บัญชียืม ไฟล์หลุด<br>ทีมคุณจะรู้ทันหรือเปล่า?','สถานการณ์จริง คะแนนคูณสอง<br>ทุกทีมยังมีโอกาสพลิกเกม!'][i]}</p><span class="pill">${i===2?'2':'4'} ข้อ · ${i===2?'200':'100'} คะแนน / คน / ข้อ</span></div></article>`).join('')}</div></section>`;
 }
@@ -54,6 +55,27 @@ function leaderboard(){
  return `${roomHeading()}<section class="leaderboard-stage"><span class="eyebrow">THE TEAM LEADERBOARD</span><h2>${state.question.id===state.total-1?'ใครจะคว้าแชมป์วันนี้?':'ทุกแต้ม เปลี่ยนเกมได้!'}</h2><p>หลังคำถาม ${state.question.id+1} / ${state.total} · ${state.unequal?'อันดับตาม % คะแนนเต็ม เพื่อให้ทีม 6 และ 7 คนแข่งขันได้ยุติธรรม':'อันดับตามคะแนนรวมทีม'}</p><div class="ranking-list">${ranked.map((t,i)=>`<article class="ranking-row" style="--team:${t.color};--delay:${i*.12}s"><span class="place">${t.rank===1?'♛':'#'+t.rank}</span><span class="team-icon">${icon(t.symbol)}</span><div class="ranking-name"><h3>${t.name}</h3><span>${t.count} คน · ${t.score.toLocaleString()} คะแนนรวม</span></div><span class="rank-change">${t.delta>0?'↑ '+t.delta:t.delta<0?'↓ '+Math.abs(t.delta):'–'}</span><strong>${state.unequal?t.percent.toFixed(2)+'%':t.score.toLocaleString()}<small>${state.unequal?'ของคะแนนเต็มทีม':'คะแนน'}</small></strong></article>`).join('')}</div><div class="comeback-line">${state.question.id===7?'🔥 สองข้อสุดท้าย คะแนนคูณสอง!':state.question.id===state.total-1?'ทุกทีมทำเต็มที่แล้ว มาฉลองกัน!':'ปรึกษาทีมให้พร้อม แล้วไปเก็บแต้มข้อหน้า!'}</div></section>${hostControls()}${!isHost()?'<p class="centered muted">รอพิธีกรไปข้อถัดไป…</p>':''}`;
 }
 function finish(){const winners=state.teams.filter(t=>t.rank===1);return `${roomHeading()}<section class="winner"><span class="eyebrow">YOU PLAYED. YOU LEARNED. YOU PROTECTED.</span><div class="trophy">${icon('trophy')}</div><p>${winners.length>1?'แชมป์ร่วมแห่งภารกิจพิทักษ์ข้อมูล':'แชมป์แห่งภารกิจพิทักษ์ข้อมูล'}</p><h2>${winners.map(t=>t.name).join(' + ')}</h2><p>เก่งขึ้นไปด้วยกัน ขอบคุณทุกทีมที่ร่วมสนุก!</p><div class="winner-badges">${winners.map(t=>`<span style="--team:${t.color}">${icon(t.symbol)} ${state.unequal?t.percent.toFixed(2)+'% · ':''}${t.score.toLocaleString()} คะแนน</span>`).join('')}</div></section>${teamCards()}<div class="takeaways"><span>เล่นจบ แต่เอาไปใช้ต่อได้</span><b>ตรวจแหล่งข้อมูล</b><b>ให้สิทธิ์เท่าที่จำเป็น</b><b>พบความเสี่ยง รีบแจ้ง</b></div>${isHost()?'<div class="finish-actions"><button class="primary" data-action="create">เปิดห้องสำหรับกลุ่มถัดไป →</button><button class="secondary" data-action="export">ดาวน์โหลดผลการแข่งขัน</button><a class="text-button" href="/">กลับหน้าแรก</a></div>':'<p class="centered"><a href="/">กลับหน้าแรก</a></p>'}`}
+function adminLogin(message){
+ app.innerHTML=`<div class="join-page"><span class="eyebrow">ADMIN ONLY</span><h1>จัดการคำถาม</h1><div class="panel join-panel"><h2>เข้าสู่ระบบผู้ดูแล</h2><p>กรอกรหัสผ่านผู้ดูแลเพื่อแก้ไขคำถามทั้ง 10 ข้อ</p><form id="admin-login-form"><label for="admin-password">รหัสผ่าน</label><input id="admin-password" type="password" autocomplete="current-password" required><button class="primary full" type="submit">เข้าสู่ระบบ →</button></form></div><a href="/" class="back-link">← กลับหน้าแรก</a></div>`;
+ if(message)toast(message);
+}
+function renderAdmin(){
+ app.innerHTML=`<div class="room-heading"><div><div class="eyebrow">ADMIN</div><h1>จัดการคำถาม</h1></div><div class="room-tools"><button class="secondary compact" data-action="admin-reset">คืนค่าเริ่มต้น</button><button class="primary compact" data-action="admin-save">บันทึกทั้งหมด</button></div></div>
+ <p class="muted">แก้ได้เฉพาะคำถาม ตัวเลือก คำตอบที่ถูก และคำอธิบาย ของ 10 ข้อเดิม ห้องที่เล่นอยู่หรือจบไปแล้วไม่เปลี่ยนตาม มีผลเฉพาะห้องที่เปิดใหม่หลังบันทึก</p>
+ ${bank.map((q,qi)=>`<div class="panel question-edit" data-q="${qi}"><div class="section-heading"><h3>ข้อ ${qi+1} · รอบ ${q.round} · ${q.points} คะแนน/คน</h3></div>
+ <label>คำถาม</label><textarea data-field="text" rows="2" maxlength="280">${esc(q.text)}</textarea>
+ <div class="qa-grid">${q.options.map((o,oi)=>`<div class="qa-row"><label class="qa-radio"><input type="radio" name="correct-${qi}" data-field="correct" value="${oi}" ${q.correct===oi?'checked':''}><span>${'ABCD'[oi]}</span></label><input data-field="option" data-oi="${oi}" maxlength="160" value="${esc(o)}"></div>`).join('')}</div>
+ <label>คำอธิบายหลังเฉลย</label><textarea data-field="explanation" rows="2" maxlength="400">${esc(q.explanation)}</textarea></div>`).join('')}
+ <div class="finish-actions"><button class="secondary" data-action="admin-reset">คืนค่าเริ่มต้น</button><button class="primary" data-action="admin-save">บันทึกทั้งหมด</button><a class="text-button" href="/">กลับหน้าแรก</a></div>`;
+}
+async function loadQuestionBank(){
+ const res=await api('/api/admin/questions');bank=res.questions.map(q=>({...q,options:[...q.options]}));renderAdmin();
+}
+async function adminInit(){
+ if(!credential){adminLogin();return}
+ try{await loadQuestionBank()}
+ catch(e){credential=null;localStorage.removeItem('dg:admin');adminLogin(e.message)}
+}
 function render(){
  const input=$('#base-url'),draft=input?.value,expanded=$('.network')?.open,focused=document.activeElement;
  const focusId=focused?.id,focusChoice=focused?.dataset.choice;
@@ -102,7 +124,14 @@ document.addEventListener('click',async e=>{
   else if(action==='fullscreen'){if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen()}
   else if(action==='void'&&confirm('ยกเลิกข้อนี้สำหรับทุกทีม? ทุกคนจะได้ 0 คะแนน')){await api(`/api/rooms/${code}/control`,{action:'void'});await poll()}
   else if(action==='export'){const result={room:code,demo:state.demo,exportedAt:new Date().toISOString(),ranking:state.teams,players:state.players};const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`data-guardians-${code}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+  else if(action==='admin-save'){b.disabled=true;const res=await api('/api/admin/questions',{questions:bank});bank=res.questions.map(q=>({...q,options:[...q.options]}));toast('บันทึกคำถามแล้ว มีผลกับห้องที่เปิดใหม่');b.disabled=false}
+  else if(action==='admin-reset'){if(!confirm('คืนค่าเริ่มต้นคำถามทั้งหมด? การแก้ไขที่ยังไม่บันทึกจะหายไป'))return;b.disabled=true;const res=await api('/api/admin/questions',{reset:true});bank=res.questions.map(q=>({...q,options:[...q.options]}));renderAdmin();toast('คืนค่าเริ่มต้นแล้ว')}
  }catch(err){toast(err.message);b.disabled=false;await poll()}finally{busy=false}
+});
+document.addEventListener('input',e=>{
+ const row=e.target.closest('[data-q]');if(!row||!bank)return;const qi=Number(row.dataset.q),field=e.target.dataset.field;
+ if(field==='option')bank[qi].options[Number(e.target.dataset.oi)]=e.target.value;
+ else if(field==='text'||field==='explanation')bank[qi][field]=e.target.value;
 });
 document.addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;const f=e.target;
@@ -114,9 +143,11 @@ document.addEventListener('submit',async e=>{
    const p=await api(`/api/rooms/${code}/join`,{name:f.elements.nickname.value,employeeId:f.elements.employeeId.value,joinKey});credential=p.token;localStorage.setItem(`dg:player:${code}`,credential);await poll();if(state?.teams[p.team])showTeam(state.teams[p.team]);
   }
   if(f.id==='base-form'){const base=new URL($('#base-url').value);if(!['http:','https:'].includes(base.protocol))throw new Error('ใช้ลิงก์ http หรือ https');localStorage.setItem('dg:base',base.origin);render();toast('อัปเดต QR Code แล้ว')}
+  if(f.id==='admin-login-form'){const res=await api('/api/admin/login',{password:f.elements['admin-password'].value});credential=res.adminToken;localStorage.setItem('dg:admin',credential);await loadQuestionBank()}
  }catch(err){toast(err.message)}finally{busy=false}
 });
 document.addEventListener('change',async e=>{
+ if(e.target.dataset.field==='correct'){const row=e.target.closest('[data-q]');bank[Number(row.dataset.q)].correct=Number(e.target.value);return}
  try{
   if(e.target.dataset.player)await api(`/api/rooms/${code}/control`,{action:'move',playerId:e.target.dataset.player,team:Number(e.target.value)});
   if(e.target.id==='seconds-setting')await api(`/api/rooms/${code}/control`,{action:'settings',seconds:Number(e.target.value)});
@@ -124,5 +155,5 @@ document.addEventListener('change',async e=>{
  }catch(err){toast(err.message)}
 });
 try{config=await api('/api/config');connection(true)}catch{connection(false)}
-if(mode==='home')home();else if(mode==='player'&&!credential)joinForm();else await poll();
+if(mode==='home')home();else if(mode==='player'&&!credential)joinForm();else if(mode==='admin')await adminInit();else await poll();
 setInterval(poll,500);setInterval(updateTimer,100);

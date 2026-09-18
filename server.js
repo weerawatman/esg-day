@@ -3,16 +3,28 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { randomBytes } from 'node:crypto';
 import QRCode from 'qrcode';
 import { Game } from './lib/game.js';
 import { networkUrls, primaryAddress } from './lib/network.js';
 import { saveSnapshot } from './lib/persistence.js';
+import { withContent } from './lib/questions.js';
 const root=path.dirname(fileURLToPath(import.meta.url));
 export function createApp({persist=true}={}) {
- const dir=path.join(root,'data'),file=path.join(dir,'rooms.json');
+ const dir=path.join(root,'data'),file=path.join(dir,'rooms.json'),questionsFile=path.join(dir,'questions.json');
  const rooms=persist&&fs.existsSync(file)?JSON.parse(fs.readFileSync(file,'utf8')):{};
  const save=persist?(data)=>saveSnapshot(file,data):()=>{};
- const game=new Game({rooms,save});
+ const loadQuestionBank=()=>{
+  if(!persist||!fs.existsSync(questionsFile))return withContent(null);
+  try{return withContent(JSON.parse(fs.readFileSync(questionsFile,'utf8')))}
+  catch(e){console.error('ไฟล์คำถามที่บันทึกไว้เสียหาย ใช้ค่าเริ่มต้นแทน:',e.message);return withContent(null)}
+ };
+ let questionBank=loadQuestionBank();
+ const saveQuestions=persist?(data)=>saveSnapshot(questionsFile,data):()=>{};
+ const game=new Game({rooms,save,questions:()=>questionBank});
+ const adminPassword=process.env.ADMIN_PASSWORD||randomBytes(4).toString('hex');
+ if(!process.env.ADMIN_PASSWORD)console.log(`ยังไม่ได้ตั้ง ADMIN_PASSWORD สำหรับหน้าจัดการคำถาม ใช้รหัสผ่านชั่วคราวรอบนี้: ${adminPassword}`);
+ const adminSession=randomBytes(24).toString('hex');
  const preferredAddress=primaryAddress();
  const server=http.createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('Cache-Control','no-store');
@@ -24,13 +36,19 @@ export function createApp({persist=true}={}) {
    if(req.method==='POST'){
     if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)throw new Error('ไม่อนุญาตคำสั่งจากเว็บไซต์อื่น');
     if(!req.headers['content-type']?.startsWith('application/json'))throw new Error('ต้องส่งข้อมูลแบบ JSON');
-    let input='';for await(const chunk of req){input+=chunk;if(input.length>8192)throw new Error('ข้อมูลมีขนาดใหญ่เกินไป')}body=JSON.parse(input||'{}');
+    let input='';for await(const chunk of req){input+=chunk;if(input.length>32768)throw new Error('ข้อมูลมีขนาดใหญ่เกินไป')}body=JSON.parse(input||'{}');
    }
    if(p==='/api/config'&&req.method==='GET'){
     const port=server.address().port;const addresses=networkUrls(os.networkInterfaces(),port,await preferredAddress);
     return send({addresses,publicUrl:process.env.PUBLIC_URL||addresses[0]||`http://localhost:${port}`});
    }
    if(p==='/api/qr'&&req.method==='GET'){const target=new URL(url.searchParams.get('url'));if(!['http:','https:'].includes(target.protocol)||target.href.length>1500)throw new Error('ลิงก์ไม่ถูกต้อง');const svg=await QRCode.toString(target.href,{type:'svg',margin:2,width:260,color:{dark:'#14283F',light:'#FFFFFF'}});res.writeHead(200,{'Content-Type':'image/svg+xml'});return res.end(svg)}
+   if(p==='/api/admin/login'&&req.method==='POST'){if(typeof body.password!=='string'||body.password!==adminPassword)throw new Error('รหัสผ่านไม่ถูกต้อง');return send({adminToken:adminSession})}
+   if(p==='/api/admin/questions'){
+    if(auth!==adminSession)throw new Error('ไม่มีสิทธิ์เข้าหน้านี้ กรุณาเข้าสู่ระบบผู้ดูแล');
+    if(req.method==='GET')return send({questions:questionBank});
+    if(req.method==='POST'){questionBank=body.reset===true?withContent(null):withContent(body.questions);saveQuestions(questionBank);return send({questions:questionBank})}
+   }
    if(p==='/api/rooms'&&req.method==='POST')return send(game.create(body.demo===true));
    const match=p.match(/^\/api\/rooms\/(\d{6})(?:\/(join|control|answer))?$/);
    if(match){const [,code,action]=match;if(req.method==='GET'&&!action)return send(game.view(code,auth));if(req.method==='POST'){if(action==='join')return send(game.join(code,body.name,body.employeeId,false,body.joinKey??null));if(action==='control')return send(game.control(code,auth,body.action,body));if(action==='answer')return send(game.answer(code,auth,body.q,body.choice))}}
