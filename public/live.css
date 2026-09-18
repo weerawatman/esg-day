@@ -24,52 +24,52 @@ body.room-mode{height:100vh;overflow:hidden;display:flex;flex-direction:column}
 body.room-mode .topbar{flex-shrink:0;height:60px}
 body.room-mode main{flex:1;min-height:0;overflow-y:auto;padding-top:14px;padding-bottom:14px}
 body.room-mode footer{display:none}
-body.room-mode .room-heading{margin:0 0 12px}
-body.room-mode .room-heading h1{font-size:22px;margin:2px 0 0}
-body.room-mode .lobby-banner{padding:16px 26px;border-radius:14px;gap:16px}
-body.room-mode .lobby-banner h2{font-size:20px;margin:4px 0}
-body.room-mode .lobby-banner p{margin:2px 0;font-size:11px}
-body.room-mode .lobby-stats{margin:10px 0;gap:14px}
-body.room-mode .lobby-stats b{font-size:19px}
-body.room-mode .timer-setting{margin:10px 0;gap:10px}
+body.room-mode .room-heading{margin:0 0 clamp(6px,1.2vmin,14px)}
+body.room-mode .room-heading h1{font-size:clamp(18px,3.2vmin,32px);margin:2px 0 0}
+body.room-mode .lobby-banner{padding:clamp(12px,2.4vmin,26px) clamp(18px,3.4vw,38px);border-radius:16px;gap:16px}
+body.room-mode .lobby-banner h2{font-size:clamp(19px,4vmin,34px);margin:4px 0}
+body.room-mode .lobby-banner p{margin:2px 0;font-size:clamp(11px,1.6vmin,14px)}
+body.room-mode .lobby-stats{margin:clamp(6px,1.2vmin,14px) 0;gap:14px}
+body.room-mode .lobby-stats b{font-size:clamp(18px,3.2vmin,30px)}
+body.room-mode .timer-setting{margin:clamp(6px,1.2vmin,14px) 0;gap:10px}
 body.room-mode .block{margin-top:6px}
-body.room-mode .qr-panel{padding:8px 12px}
-body.room-mode .qr-panel img{width:96px;height:96px}
-body.room-mode .qr-panel strong{font-size:18px;letter-spacing:3px}
+body.room-mode .qr-panel{padding:clamp(8px,1.5vmin,14px) clamp(10px,1.8vw,20px)}
+body.room-mode .qr-panel img{width:clamp(84px,13vmin,150px);height:clamp(84px,13vmin,150px)}
+body.room-mode .qr-panel strong{font-size:clamp(16px,2.8vmin,28px);letter-spacing:3px}
 body.room-mode .network{margin-top:6px;font-size:11px}
-body.room-mode .section-heading{margin:12px 0 8px}
-body.room-mode .section-heading h2{font-size:15px;margin:0}
-body.room-mode .teams-grid{gap:10px}
-body.room-mode .team-card{padding:10px 12px}
-body.room-mode .team-top{gap:6px}
-body.room-mode .team-thai{margin:5px 0 6px;font-size:10px}
-body.room-mode .roster{max-height:100px;overflow-y:auto;padding-top:6px}
-body.room-mode .member{padding:4px 0}
-body.room-mode .question-dots{margin-bottom:10px}
-body.room-mode .game-stage{padding:14px 22px 0;border-radius:14px}
-body.room-mode .question-spotlight{min-height:0;padding:14px 0 18px;gap:20px}
-body.room-mode .question-spotlight h2{font-size:23px;margin:0}
-body.room-mode .countdown-ring{width:78px;height:78px}
-body.room-mode .countdown-ring>span{font-size:30px}
-body.room-mode .live-options{margin:14px 0}
-body.room-mode .live-options .option{min-height:74px;padding:14px 18px}
-body.room-mode .reveal-panel{margin-top:12px;padding:12px 16px;gap:24px}
-body.room-mode .explanation p{font-size:12px;margin:4px 0}
-body.room-mode .chart-track{height:44px}
-body.room-mode .host-controls{margin:12px 0}
-body.room-mode .countdown-stage{min-height:0;padding:22px 24px}
-body.room-mode .countdown-stage h2{margin:8px 0;font-size:21px}
-body.room-mode .countdown-number{font-size:88px}
-body.room-mode .leaderboard-stage{padding:20px 30px}
-body.room-mode .leaderboard-stage h2{margin:6px 0 4px;font-size:23px}
-body.room-mode .ranking-list{margin:14px auto;gap:8px}
-body.room-mode .ranking-row{padding:12px 18px}
-body.room-mode .ranking-name h3{font-size:17px}
-body.room-mode .winner{padding:22px 25px;margin-bottom:12px}
-body.room-mode .winner h2{font-size:33px;margin:8px 0}
-body.room-mode .trophy{font-size:38px;padding:4px}
-body.room-mode .trophy .icon{width:50px;height:50px}
-body.room-mode .takeaways{margin:14px 0}
+body.room-mode .section-heading{margin:clamp(6px,1.2vmin,14px) 0 clamp(4px,1vmin,10px)}
+body.room-mode .section-heading h2{font-size:clamp(14px,2.4vmin,20px);margin:0}
+body.room-mode .teams-grid{gap:clamp(8px,1.4vmin,18px)}
+body.room-mode .team-card{padding:clamp(10px,1.8vmin,18px) clamp(10px,1.8vw,18px)}
+body.room-mode .team-top{gap:8px}
+body.room-mode .team-thai{margin:5px 0 6px;font-size:clamp(10px,1.4vmin,12px)}
+body.room-mode .roster{max-height:clamp(70px,11vmin,150px);overflow-y:auto;padding-top:6px}
+body.room-mode .member{padding:clamp(3px,.7vmin,8px) 0}
+body.room-mode .question-dots{margin-bottom:clamp(6px,1.2vmin,14px)}
+body.room-mode .game-stage{padding:clamp(10px,2vmin,20px) clamp(18px,3vw,32px) 0;border-radius:16px}
+body.room-mode .question-spotlight{min-height:0;padding:clamp(10px,2vmin,20px) 0 clamp(12px,2.4vmin,22px);gap:clamp(14px,2.8vw,33px)}
+body.room-mode .question-spotlight h2{font-size:clamp(19px,3.8vmin,30px);margin:0}
+body.room-mode .countdown-ring{width:clamp(66px,11vmin,106px);height:clamp(66px,11vmin,106px)}
+body.room-mode .countdown-ring>span{font-size:clamp(24px,5vmin,42px)}
+body.room-mode .live-options{margin:clamp(10px,2vmin,22px) 0}
+body.room-mode .live-options .option{min-height:clamp(56px,10vmin,116px);padding:clamp(10px,2vmin,21px) clamp(12px,2.2vw,24px)}
+body.room-mode .reveal-panel{margin-top:clamp(8px,1.6vmin,16px);padding:clamp(8px,1.6vmin,16px) clamp(14px,2.4vw,25px);gap:clamp(16px,3vw,40px)}
+body.room-mode .explanation p{font-size:clamp(12px,1.8vmin,14px);margin:2px 0;line-height:1.6}
+body.room-mode .chart-track{height:clamp(30px,5.5vmin,55px)}
+body.room-mode .host-controls{margin:clamp(10px,2vmin,24px) 0}
+body.room-mode .countdown-stage{min-height:0;padding:clamp(20px,4vmin,38px) clamp(20px,3vw,24px)}
+body.room-mode .countdown-stage h2{margin:8px 0;font-size:clamp(18px,3.4vmin,27px)}
+body.room-mode .countdown-number{font-size:clamp(64px,15vmin,145px)}
+body.room-mode .leaderboard-stage{padding:clamp(16px,3.2vmin,28px) clamp(24px,4vw,45px)}
+body.room-mode .leaderboard-stage h2{margin:6px 0 4px;font-size:clamp(21px,4vmin,32px)}
+body.room-mode .ranking-list{margin:clamp(10px,2.4vmin,30px) auto;gap:clamp(6px,1.4vmin,15px)}
+body.room-mode .ranking-row{padding:clamp(8px,1.8vmin,18px) clamp(14px,2.4vw,25px)}
+body.room-mode .ranking-name h3{font-size:clamp(15px,2.6vmin,23px)}
+body.room-mode .winner{padding:clamp(18px,3.6vmin,40px) clamp(18px,3vw,25px);margin-bottom:clamp(10px,2vmin,26px)}
+body.room-mode .winner h2{font-size:clamp(26px,6vmin,51px);margin:8px 0}
+body.room-mode .trophy{font-size:clamp(30px,7vmin,60px);padding:4px}
+body.room-mode .trophy .icon{width:clamp(40px,8vmin,80px);height:clamp(40px,8vmin,80px)}
+body.room-mode .takeaways{margin:clamp(10px,2vmin,30px) 0}
 @keyframes confetti-fall{to{transform:translateY(110vh) rotate(var(--spin));opacity:.2}}@keyframes rank-in{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}@keyframes number-pop{from{transform:scale(.7);opacity:.3}to{transform:scale(1);opacity:1}}@keyframes bar-grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}@keyframes urgent{from{transform:scale(1)}to{transform:scale(1.055)}}
 @media(max-width:1050px){.hero.live-hero{gap:35px}.live-hero h1{font-size:46px}.quiz-poster{padding:20px}.poster-question h2{font-size:28px}.poster-sticker{right:-13px}.teams-grid{gap:14px}.question-spotlight h2{font-size:26px}.ranking-row{gap:15px}}
 @media(max-width:750px){.hero.live-hero{grid-template-columns:1fr;padding:34px 22px 39px;gap:32px;border-radius:22px}.live-hero h1{font-size:43px;line-height:1.37;letter-spacing:-1px}.live-hero .lead{font-size:13px}.quiz-poster{margin:0 6px 13px 0;transform:rotate(1deg);padding:19px;border-width:5px}.poster-question h2{font-size:28px}.poster-answers>div{font-size:10px;padding:14px 9px;min-height:59px}.poster-teams{gap:13px;font-size:9px;padding-bottom:10px}.poster-sticker{font-size:10px;right:-15px;bottom:-25px;padding:10px 14px}.poster-sticker b{font-size:13px}.teams-grid{grid-template-columns:1fr}.team-card{padding:20px}.member select{width:auto;max-width:90px}.team-top{flex-wrap:nowrap}.team-top h3{font-size:20px}.team-thai{font-size:12px}.member{font-size:12px;padding:8px}.team-score b{font-size:33px}.room-tools{gap:9px;flex-wrap:wrap}.room-tag b{font-size:21px}.sound-control{padding:9px;font-size:10px}.screen-link{font-size:10px;padding:9px}.lobby-banner h2{font-size:27px}.timer-setting{flex-wrap:wrap;gap:8px}.timer-setting label{font-size:11px}.question-dots{gap:5px;margin-bottom:17px}.question-dots>span{width:24px;height:24px;font-size:10px}.question-dots>b{font-size:10px;width:100%;margin:8px 0 0}.game-stage{padding:17px 19px 0;border-radius:14px}.stage-meta{gap:9px}.stage-meta .pill{font-size:9px;padding:5px 7px}.response-count{font-size:10px}.response-count b{font-size:15px}.question-spotlight{gap:17px;flex-direction:column;padding:20px 0 25px;text-align:center}.question-spotlight h2{font-size:22px;line-height:1.6}.countdown-ring{width:82px;height:82px}.countdown-ring:before{inset:5px}.countdown-ring>span{font-size:34px}.countdown-ring small{font-size:9px}.time-track{margin:0 -19px}.live-options{gap:11px;grid-template-columns:1fr;margin-top:20px}.live-options .option,.live-options .option.selected{padding:15px 17px;gap:15px;min-height:86px;border-radius:10px}.live-options .choice-symbol{font-size:28px;min-width:31px}.choice-text{font-size:14px}.choice-text small{font-size:9px}.submit-row{flex-direction:column;align-items:stretch;gap:13px}.submit-row p{text-align:center;font-size:12px}.submit-row .primary{width:100%;font-size:14px}.reveal-panel{grid-template-columns:1fr;gap:23px;padding:20px}.explanation{padding:5px 13px}.explanation p{font-size:13px}.answer-chart{gap:20px}.host-controls{gap:15px;flex-direction:column}.host-controls .primary{width:100%;min-width:0;font-size:14px}.closed-message{font-size:16px}.answer-status{font-size:12px;line-height:1.9}.countdown-stage{min-height:430px;padding:33px 18px}.countdown-stage h2{font-size:23px}.countdown-number{font-size:135px}.leaderboard-stage{padding:28px 15px}.leaderboard-stage h2{font-size:25px}.leaderboard-stage>p{font-size:10px}.ranking-list{gap:13px;margin:24px 0}.ranking-row{padding:16px 12px;gap:10px;border-left-width:4px;flex-wrap:wrap}.place{font-size:20px;width:23px}.ranking-row:first-child .place{font-size:25px}.ranking-row .team-icon{padding:7px}.ranking-row .icon{width:25px;height:25px}.ranking-name h3{font-size:18px}.ranking-name>span{font-size:9px}.rank-change{font-size:11px}.ranking-row>strong{width:100%;min-width:0;font-size:27px;padding-left:44px;text-align:left;display:flex;align-items:baseline;gap:10px}.ranking-row strong small{font-size:9px}.comeback-line{font-size:12px}.winner h2{font-size:33px}.winner .eyebrow{font-size:9px;line-height:1.8}.winner{padding:25px 18px}.trophy .icon{width:65px;height:65px}.my-team-pill{font-size:13px;padding:10px 14px}.takeaways{margin:24px 0}}
