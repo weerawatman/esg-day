@@ -3,6 +3,31 @@ import assert from 'node:assert/strict';
 import { Game } from '../lib/game.js';
 import { questions } from '../lib/questions.js';
 function setup(n=20){let now=1000;const game=new Game({now:()=>now,choose:n=>n-1});const room=game.create();const players=Array.from({length:n},(_,i)=>game.join(room.code,`ผู้เล่น ${i+1}`,`EMP${i+1}`));const tick=ms=>now+=ms;const start=()=>{game.control(room.code,room.hostToken,'start');tick(3000)};return {game,room,players,tick,start}}
+
+test('new rooms default to 30 seconds and keep office scenes with shuffled questions',()=>{
+ const {game,room,start}=setup();assert.equal(game.view(room.code).settings.seconds,30);
+ start();const q=game.view(room.code).question;
+ assert.ok(q.scene);assert.equal(q.title,questions[0].title);
+ assert.equal(q.sourceSlides,undefined,'attribution is revealed with the explanation');
+});
+
+test('closed phase shows only answer counts; all-correct badges require every team member and no void',()=>{
+ const {game,room,players,start}=setup(6);start();
+ assert.equal(game.view(room.code).perfectTeamIds,undefined);
+ const perfect=players.filter(p=>p.team===0);
+ for(const p of perfect)game.answer(room.code,p.token,0,questions[0].correct);
+ game.answer(room.code,players.find(p=>p.team===1).token,0,questions[0].correct);
+ for(const p of players.filter(p=>p.team===2))game.answer(room.code,p.token,0,(questions[0].correct+1)%4);
+ game.control(room.code,room.hostToken,'close');
+ const closed=game.view(room.code);assert.equal(closed.distribution.reduce((a,b)=>a+b,0),5);
+ assert.equal(closed.question.correct,undefined);assert.equal(closed.question.explanation,undefined);assert.equal(closed.perfectTeamIds,undefined);
+ game.control(room.code,room.hostToken,'reveal');
+ assert.deepEqual(game.view(room.code).perfectTeamIds,[0]);
+ assert.deepEqual(game.view(room.code).question.sourceSlides,[2,8]);
+ const other=setup(1);other.start();other.game.answer(other.room.code,other.players[0].token,0,questions[0].correct);
+ other.game.control(other.room.code,other.room.hostToken,'void');
+ assert.deepEqual(other.game.view(other.room.code).perfectTeamIds,[]);
+});
 test('20 employees randomized among minimum-size teams, yielding 7/7/6; unique IDs and roster locking',()=>{
  const {game,room,players,start}=setup();assert.equal(players[0].team,2,'choose random tie result instead of first team');assert.deepEqual([0,1,2].map(t=>players.filter(p=>p.team===t).length).sort(),[6,7,7]);
  assert.throws(()=>game.join(room.code,'  ','EMP50'));assert.throws(()=>game.join(room.code,'ใหม่',' emp1 '));assert.throws(()=>game.join(room.code,'ใหม่',''));assert.throws(()=>game.control(room.code,room.hostToken,'move',{playerId:players[0].id,team:3}));assert.equal(game.view(room.code).players[0].employeeId,undefined);
@@ -21,7 +46,7 @@ test('solutions and histogram hidden; duplicate/stale answers rejected; reveal s
  game.control(room.code,room.hostToken,'leaderboard');assert.equal(game.view(room.code).phase,'leaderboard');game.control(room.code,room.hostToken,'next');tick(3000);assert.throws(()=>game.answer(room.code,players[0].token,0,1));
 });
 test('ten questions, 10 points/player; 7/7/6 teams share perfect normalized rank; separate new room',()=>{
- const {game,room,players,start,tick}=setup();start();const answers=[1,2,0,3,2,1,0,3,1,3];answers.forEach((a,q)=>{players.forEach(p=>game.answer(room.code,p.token,q,a));assert.equal(game.view(room.code).phase,'closed');game.control(room.code,room.hostToken,'reveal');game.control(room.code,room.hostToken,'leaderboard');game.control(room.code,room.hostToken,'next');tick(3000)});
+ const {game,room,players,start,tick}=setup();start();const answers=questions.map(q=>q.correct);answers.forEach((a,q)=>{players.forEach(p=>game.answer(room.code,p.token,q,a));assert.equal(game.view(room.code).phase,'closed');game.control(room.code,room.hostToken,'reveal');game.control(room.code,room.hostToken,'leaderboard');game.control(room.code,room.hostToken,'next');tick(3000)});
  const v=game.view(room.code);assert.equal(v.phase,'finished');assert.equal(v.total,10);assert.equal(v.teams.length,3);v.teams.forEach(t=>{assert.equal(t.score,t.count*10);assert.equal(t.percent,100);assert.equal(t.rank,1)});const next=game.create();assert.notEqual(next.code,room.code);assert.equal(game.view(next.code).players.length,0);assert.equal(game.view(room.code).players[0].score,10);
 });
 test('session snapshot restores employee identity, team, answer and points without re-randomizing',()=>{

@@ -1,0 +1,357 @@
+/* Activity screens share one fluid stage, independent of the homepage width. */
+body.room-mode {
+  --stage: #281451;
+  --stage-light: #432578;
+  --stage-muted: #d0c1e9;
+  --gold: #ffe082;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: white;
+  background: radial-gradient(ellipse at 85% 10%, #57318e 0, transparent 55%), var(--stage);
+  font-family: 'Leelawadee UI', Tahoma, sans-serif;
+}
+body.room-mode .topbar {
+  flex-shrink: 0;
+  height: 64px;
+  padding: 0 clamp(20px, 2.5vw, 64px);
+  background: #21103d80;
+  border-color: #ffffff16;
+}
+.room-mode .brand-icon { background: #ffffff10; color: var(--gold); width: 36px; height: 40px; }
+.room-mode .brand small, .room-mode .event-label, .room-mode .connection { color: var(--stage-muted); }
+.room-mode .connection i { background: #7ee3b5; }
+.room-mode .connection .offline { background: #ffb65c; }
+body.room-mode main {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  flex: 1;
+  margin: 0;
+  padding: clamp(16px, 2.2vh, 28px) clamp(20px, 2.5vw, 64px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.7vh, 22px);
+  overflow-y: auto;
+  scrollbar-color: #9072bf #281451;
+}
+.room-mode footer { display: none; }
+.room-mode .panel { color: var(--ink); }
+.room-mode main > * { flex-shrink: 0; min-width: 0; }
+.room-mode .eyebrow, .room-mode .muted { color: var(--stage-muted); }
+.room-mode .room-heading { margin: 0; gap: 16px; }
+.room-mode .room-heading h1 { font-size: clamp(22px, 2.4vw, 40px); margin: 0; line-height: 1.35; }
+.room-mode .room-heading .eyebrow { font-size: 10px; margin-bottom: 4px; }
+.room-mode .room-tools { gap: 12px; }
+.room-mode .room-tag { color: var(--stage-muted); padding-right: 12px; }
+.room-mode .room-tag b { color: var(--gold); font-size: clamp(23px, 2.3vw, 36px); font-family: 'Trebuchet MS', sans-serif; }
+.room-mode .secondary, .room-mode .icon-button { background: #ffffff10; color: white; border-color: #ffffff30; box-shadow: none; }
+.room-mode .secondary:hover, .room-mode .icon-button:hover { background: #ffffff22; }
+.room-mode .primary { background: var(--gold); color: #281451; box-shadow: 0 4px 0 #b58a2d; font-size: 16px; min-height: 50px; }
+.room-mode .primary:hover:not(:disabled) { background: #ffebaa; }
+.room-mode .text-button { color: #e0cfff; }
+.room-mode :is(button, a, input, select):focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+.room-mode :is(input, select):focus-visible { outline-color: #9063ee; }
+.room-mode .centered { margin: 0; }
+
+/* Registration: welcome and form occupy the stage together. */
+.registration-stage { flex: 1; display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 7vw; padding: 3vh 5vw; }
+.registration-welcome h1 { font-size: clamp(36px, 4vw, 72px); line-height: 1.45; letter-spacing: -1.5px; margin: 24px 0; }
+.registration-welcome h1 span { color: var(--gold); }
+.registration-welcome > p { font-size: clamp(16px, 1.4vw, 23px); color: var(--stage-muted); line-height: 1.8; }
+.registration-welcome .live-dot { background: #8ae4ba; margin-right: 8px; }
+.registration-teams { display: flex; gap: clamp(20px, 3vw, 60px); margin: 40px 0 28px; }
+.registration-teams > div { display: grid; gap: 12px; justify-items: center; }
+.registration-teams > div > span { display: grid; place-items: center; width: clamp(74px, 8vw, 140px); aspect-ratio: 1; border-radius: 28%; background: var(--team); box-shadow: 0 8px 0 #160b3280; transform: rotate(-6deg); border: 2px solid #ffffff25; }
+.registration-teams > div:nth-child(2) > span { transform: rotate(5deg) translateY(-12px); }
+.registration-teams .icon { width: 55%; height: 55%; }
+.registration-teams b { font-family: 'Trebuchet MS', sans-serif; letter-spacing: 2px; font-size: 13px; }
+.registration-facts { display: flex; gap: 24px; color: var(--stage-muted); font-size: 13px; }
+.registration-facts b { color: white; font-size: 24px; margin-right: 5px; }
+.registration-form { width: 100%; max-width: 600px; justify-self: center; text-align: center; }
+.registration-form .join-panel { color: #30204d; padding: clamp(26px, 3vw, 56px); border: 0; border-radius: 26px; box-shadow: 0 18px 0 #140a2c30; }
+.registration-form h2 { font-size: clamp(27px, 2.5vw, 40px); margin: 20px 0 8px; }
+.registration-form .pill { background: #eee6ff; color: #604093; letter-spacing: 2px; padding: 8px 14px; }
+.registration-form label { font-size: 14px; margin-top: 20px; }
+.registration-form input { min-height: 58px; font-size: 17px; margin: 0; }
+.registration-form .primary { margin-top: 28px; background: #7651e8; color: white; box-shadow: 0 4px 0 #5133a9; min-height: 58px; }
+.registration-form .primary:hover:not(:disabled) { background: #6742d6; }
+.registration-form .back-link { color: var(--stage-muted); }
+
+/* Lobby: large invitation + scan target, followed by a flexible team roster. */
+.room-mode .lobby-banner { flex: 1.25 0 auto; background: #ffffff08; border: 1px solid #ffffff1a; padding: clamp(18px, 2.5vh, 36px) clamp(26px, 4vw, 76px); gap: 32px; border-radius: 24px; }
+.room-mode .lobby-banner h2 { font-size: clamp(30px, 4.7vh, 60px); line-height: 1.35; margin: 12px 0; }
+.room-mode .lobby-banner p { color: var(--stage-muted); font-size: clamp(13px, 1.1vw, 19px); margin: 8px 0; }
+.room-mode .lobby-stats { margin: 12px 0; }
+.room-mode .lobby-stats b { font-family: 'Trebuchet MS', sans-serif; font-size: clamp(30px, 3vw, 48px); color: var(--gold); }
+.room-mode .lobby-stats small, .room-mode .lobby-stats > span { font-size: 14px; }
+.room-mode .timer-setting { margin: 12px 0; }
+.lobby-launch { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.room-mode .qr-panel { padding: 16px 24px; border-radius: 20px; box-shadow: 0 8px 0 #15092944; }
+.room-mode .qr-panel img { width: clamp(160px, 23vh, 300px); height: auto; }
+.room-mode .qr-panel strong { font-size: clamp(34px, 4vw, 64px); color: #35216b; letter-spacing: 7px; line-height: 1.3; }
+.room-mode .qr-panel > span { font-size: 14px; }
+.room-mode .qr-panel .text-button { color: #64429d; font-size: 12px; }
+.room-mode .network { margin: 0; color: var(--stage-muted); }
+.room-mode .section-heading { margin: 0; }
+.room-mode .section-heading h2 { font-size: clamp(18px, 1.5vw, 25px); margin: 0; }
+.room-mode .teams-grid { flex: 1 0 auto; gap: 18px; }
+.room-mode .team-card { color: #30204d; border: 0; border-top: 5px solid var(--team); padding: clamp(16px, 1.7vw, 28px); display: flex; flex-direction: column; }
+.room-mode .team-top h3 { font-size: clamp(20px, 1.8vw, 32px); }
+.room-mode .member-count { font-size: 13px; }
+.room-mode .team-thai { margin: 6px 0 10px; }
+.room-mode .roster { flex: 1; min-height: 70px; max-height: clamp(100px, 18vh, 240px); overflow: auto; }
+.room-mode .member { font-size: 13px; padding: 6px 0; }
+.room-mode .member select { font-size: 11px; max-width: 100px; padding: 5px; }
+.room-mode .member > span:nth-child(2) { overflow-wrap: anywhere; min-width: 0; flex: 1; }
+
+/* Gameplay allocates remaining height to the question and answer tiles. */
+.room-mode .question-dots { margin: 0; gap: 8px; }
+.room-mode .question-dots > span { background: #ffffff14; color: #d3c2ee; }
+.room-mode .question-dots > span.done { background: #7853b2; color: white; }
+.room-mode .question-dots > span.active { background: var(--gold); color: #281451; box-shadow: none; }
+.room-mode .question-dots > b { color: var(--stage-muted); font-size: 13px; }
+.room-mode .game-stage { flex: 1 0 auto; display: flex; flex-direction: column; padding: clamp(18px, 2.2vh, 30px) clamp(22px, 3vw, 56px) 0; background: #ffffff0b; border: 1px solid #ffffff1a; box-shadow: none; border-radius: 22px; }
+.room-mode .stage-meta .pill { font-size: 13px; }
+.room-mode .response-count { font-size: 14px; }
+.room-mode .response-count b { font-size: 27px; }
+.room-mode .question-spotlight { flex: 1; gap: clamp(24px, 3vw, 60px); min-height: 150px; padding: 22px 0 30px; }
+.room-mode .question-spotlight h2 { font-size: clamp(26px, 2.8vw, 52px); line-height: 1.5; max-width: none; overflow-wrap: anywhere; }
+.room-mode .countdown-ring { width: clamp(90px, 10vw, 160px); height: clamp(90px, 10vw, 160px); }
+.room-mode .countdown-ring::before { background: #382065; }
+.room-mode .countdown-ring > span { font-size: clamp(38px, 4.8vw, 76px); }
+.room-mode .countdown-ring small { font-size: 12px; }
+.room-mode .time-track { margin: 0; border-radius: 8px; height: 7px; }
+.room-mode .live-options { flex: 1.2 0 auto; grid-template-rows: repeat(2, minmax(100px, 1fr)); gap: clamp(12px, 1.5vw, 24px); margin: 0; }
+.room-mode .live-options .option { min-height: 100px; padding: clamp(18px, 2.5vh, 34px) clamp(20px, 2.5vw, 42px); border-radius: 18px; gap: clamp(16px, 2vw, 34px); box-shadow: inset 0 -6px #0003; }
+.room-mode .choice-text { font-size: clamp(18px, 1.65vw, 32px); line-height: 1.5; }
+.room-mode .choice-text small { font-size: 12px; opacity: .85; }
+.room-mode .live-options .choice-symbol { font-size: clamp(32px, 3vw, 56px); min-width: 40px; }
+.room-mode .live-options .option.selected, .room-mode .live-options .option.correct { border-color: white; outline: 3px solid var(--gold); outline-offset: 2px; }
+.room-mode .live-options .option.muted-option { opacity: .4; }
+.room-mode .host-controls, .room-mode .submit-row { margin: 0; min-height: 54px; }
+.room-mode .host-controls .primary, .room-mode .submit-row .primary { min-width: 260px; }
+.room-mode .host-controls { justify-content: flex-end; }
+.room-mode .host-controls .text-button { order: -1; margin-right: auto; }
+.room-mode .submit-row p { font-size: 15px; }
+.room-mode .submit-row small { color: var(--stage-muted); }
+.room-mode .answer-status { background: #ffffff12; color: white; margin: 0; padding: 14px; }
+.room-mode .success-status { background: #146f57; }
+.room-mode .reveal-panel { margin: 0; color: #30204d; padding: 18px 26px; gap: 30px; grid-template-columns: 1.8fr 1fr; }
+.room-mode .explanation p { font-size: clamp(14px, 1.15vw, 21px); line-height: 1.65; margin: 5px 0; }
+.room-mode .closed-message { color: var(--gold); margin: 0; }
+.room-mode .countdown-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 420px; background: transparent; border: 1px solid #ffffff1a; }
+.room-mode .countdown-stage h2 { font-size: clamp(26px, 3vw, 54px); }
+.room-mode .countdown-number { font-size: clamp(140px, 29vh, 340px); line-height: 1.1; color: var(--gold); }
+.room-mode .countdown-stage p { font-size: 20px; }
+.room-mode .leaderboard-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; background: #ffffff08; border: 1px solid #ffffff1a; padding: clamp(24px, 3vh, 48px) 5vw; }
+.room-mode .leaderboard-stage h2 { font-size: clamp(28px, 3.3vw, 56px); margin: 8px 0; }
+.room-mode .leaderboard-stage > p { font-size: 14px; margin: 0; }
+.room-mode .ranking-list { width: 100%; max-width: 1400px; margin: 24px auto; gap: clamp(14px, 2vh, 28px); }
+.room-mode .ranking-row { padding: clamp(12px, 1.8vh, 24px) 28px; }
+.room-mode .ranking-name h3 { font-size: clamp(24px, 2.4vw, 44px); }
+.room-mode .ranking-row > strong { font-size: clamp(32px, 3vw, 52px); }
+.room-mode .ranking-name > span { font-size: 13px; }
+
+/* Final podium preserves server ranks, including joint winners. */
+.room-mode .winner { background: transparent; padding: 0; margin: 0; overflow-wrap: anywhere; }
+.room-mode .winner .trophy { padding: 0; line-height: 1; }
+.room-mode .trophy .icon { width: clamp(42px, 7vh, 80px); height: clamp(42px, 7vh, 80px); }
+.room-mode .winner h2 { font-size: clamp(32px, 4vw, 70px); margin: 0; color: var(--gold); line-height: 1.3; }
+.room-mode .winner p { margin: 5px 0; font-size: 14px; }
+.room-mode .winner-badges { margin-top: 10px; }
+.podium { flex: 1 0 auto; display: flex; align-items: flex-end; justify-content: center; gap: clamp(14px, 2vw, 36px); padding: 12px 5vw 0; }
+.podium-team { flex: 1; max-width: 500px; text-align: center; min-width: 0; }
+.podium-emblem { display: inline-grid; place-items: center; background: var(--team); border: 2px solid #ffffff40; border-radius: 24%; width: clamp(54px, 7vh, 100px); aspect-ratio: 1; box-shadow: 0 6px 0 #13082550; }
+.podium-emblem .icon { width: 60%; height: 60%; }
+.podium-team h3 { font: bold clamp(22px, 2.6vw, 44px)/1.3 'Trebuchet MS', sans-serif; letter-spacing: 2px; margin: 14px 0 2px; }
+.podium-team > p { font-size: 12px; color: var(--stage-muted); margin: 0 0 14px; }
+.podium-step { min-height: calc(100px + (4 - var(--place)) * 3.5vh); display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 18px; background: #ffffff0d; border: 1px solid #ffffff26; border-top: 4px solid var(--team); border-radius: 18px 18px 0 0; }
+.podium-champion .podium-step { background: #ffe08214; border-color: #ffe08265; border-top-color: var(--gold); }
+.podium-rank { font-size: 16px; color: var(--stage-muted); }
+.podium-champion .podium-rank { color: var(--gold); }
+.podium-step strong { font: bold clamp(32px, 3.5vw, 64px)/1.2 'Trebuchet MS', sans-serif; }
+.podium-step small { font-size: 12px; color: var(--stage-muted); }
+.room-mode .takeaways { margin: 0; padding: 10px 0; gap: 12px 24px; border-top: 1px solid #ffffff18; }
+.room-mode .takeaways span { color: var(--stage-muted); }
+.room-mode .finish-actions { margin: 0; }
+
+@media (min-width: 901px) {
+  body.room-mode #app[data-phase="lobby"] { gap: clamp(8px, 1vh, 12px); }
+  .room-mode #app[data-phase="lobby"] .teams-grid { flex: 1 0 240px; min-height: 240px; }
+  .room-mode #app[data-phase="lobby"] .team-card { min-height: 0; overflow: hidden; }
+  .room-mode #app[data-phase="lobby"] .roster { height: 0; min-height: 0; max-height: none; }
+  .room-mode .lobby-banner h2 br { display: none; }
+  .room-mode #app[data-phase="lobby"] .qr-panel img { width: clamp(145px, 21vh, 260px); }
+  .room-mode #app[data-phase="lobby"] .qr-panel strong { font-size: clamp(34px, 5vh, 58px); }
+  .room-mode #app[data-phase="closed"] .question-spotlight { min-height: 90px; padding: 12px 0 16px; }
+  .room-mode #app[data-phase="closed"] .countdown-ring { width: 90px; height: 90px; }
+  .room-mode #app[data-phase="closed"] .countdown-ring > span { font-size: 40px; }
+  .room-mode #app[data-phase="reveal"] .game-stage { padding-top: 12px; }
+  .room-mode #app[data-phase="reveal"] .question-spotlight { min-height: 0; padding: 10px 0 14px; }
+  .room-mode #app[data-phase="reveal"] .countdown-ring { width: 66px; height: 66px; }
+  .room-mode #app[data-phase="reveal"] .countdown-ring > span { font-size: 36px; }
+  .room-mode #app[data-phase="reveal"] .question-spotlight h2 { font-size: clamp(23px, 3vh, 36px); }
+  .room-mode #app[data-phase="reveal"] .live-options .option { padding: 10px 24px; min-height: 64px; }
+  .room-mode #app[data-phase="reveal"] .live-options { grid-template-rows: repeat(2, minmax(64px, 1fr)); }
+  .room-mode #app[data-phase="reveal"] .choice-text { font-size: clamp(17px, 2.2vh, 24px); }
+  .room-mode #app[data-phase="reveal"] .choice-text small { display: inline; margin-right: 10px; }
+  .room-mode #app[data-phase="reveal"] .reveal-panel { padding: 10px 20px; }
+  .room-mode #app[data-phase="reveal"] .chart-track { height: 40px; }
+  .room-mode #app[data-phase="leaderboard"] .ranking-list { margin: 10px auto; }
+  .room-mode #app[data-phase="finished"] { gap: 10px; }
+  .room-mode .winner > .eyebrow { display: none; }
+  .room-mode .winner-badges { display: none; }
+}
+
+/* Short projectors retain a complete stage; content may still scroll when enlarged. */
+@media (min-width: 901px) and (max-height: 820px) {
+  body.room-mode .topbar { height: 54px; }
+  body.room-mode main { gap: 10px; padding-top: 12px; padding-bottom: 14px; }
+  .room-mode .room-heading h1 { font-size: 25px; }
+  .room-mode .lobby-banner { padding: 18px 32px; }
+  .room-mode .lobby-banner h2 { font-size: 34px; margin: 8px 0; }
+  .room-mode .lobby-stats { margin: 4px 0; }
+  .room-mode .lobby-stats b { font-size: 28px; }
+  .room-mode .timer-setting { margin: 6px 0; }
+  .room-mode .block { margin-top: 8px; }
+  .room-mode .team-card { padding: 12px 18px; }
+  .room-mode .team-thai { margin: 4px 0; }
+  .room-mode .roster { max-height: 90px; }
+  .room-mode #app[data-phase="lobby"] .teams-grid { flex-basis: 190px; min-height: 190px; }
+  .room-mode .lobby-banner .block { font-size: 10px; }
+  .room-mode .lobby-launch { gap: 18px; }
+  .room-mode .lobby-banner .primary { min-height: 44px; padding: 9px 20px; }
+  .room-mode #app[data-phase="lobby"] .qr-panel { padding: 10px 16px; }
+  .room-mode #app[data-phase="lobby"] .qr-panel img { width: 140px; }
+  .room-mode .question-spotlight { min-height: 110px; padding: 12px 0 18px; }
+  .room-mode .question-spotlight h2 { font-size: 28px; }
+  .room-mode #app[data-phase="closed"] .game-stage { padding-top: 10px; }
+  .room-mode #app[data-phase="closed"] .live-options .option { padding-top: 10px; padding-bottom: 10px; }
+  .room-mode .countdown-ring { width: 90px; height: 90px; }
+  .room-mode .countdown-ring > span { font-size: 40px; }
+  .room-mode .live-options { grid-template-rows: repeat(2, minmax(76px, 1fr)); }
+  .room-mode .live-options .option { min-height: 76px; padding: 12px 24px; }
+  .room-mode .choice-text { font-size: 20px; }
+  .room-mode .reveal-panel { padding: 10px 18px; }
+  .room-mode .explanation { padding: 4px 12px; }
+  .room-mode .chart-track { height: 40px; }
+  .room-mode .winner h2 { font-size: 38px; }
+  .room-mode .winner > .eyebrow, .room-mode .winner-badges { display: none; }
+  .room-mode .winner .trophy { display: none; }
+  .room-mode .leaderboard-stage { padding: 16px 5vw; }
+  .room-mode .leaderboard-stage h2 { font-size: 30px; margin: 4px 0; }
+  .room-mode .ranking-list { margin: 16px auto; gap: 12px; }
+  .room-mode .ranking-row { padding: 12px 24px; }
+  .room-mode .ranking-row > strong { font-size: 32px; }
+  .room-mode .ranking-name h3 { font-size: 26px; }
+  .podium-team h3 { font-size: 26px; margin-top: 8px; }
+  .podium-team > p { margin-bottom: 8px; }
+  .podium-step { padding: 12px; }
+  .registration-stage { padding: 12px 4vw; }
+  .registration-welcome h1 { font-size: 40px; }
+  .registration-teams { margin: 24px 0; }
+  .registration-form .join-panel { padding: 24px 32px; }
+}
+
+@media (max-width: 900px) {
+  body.room-mode main { padding: 16px 18px; gap: 12px; }
+  .room-mode .room-heading { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .room-mode .room-heading h1 { font-size: 25px; }
+  .room-mode .room-tools { width: 100%; gap: 8px; }
+  .room-mode .room-tag { margin-right: auto; }
+  .room-mode.player .room-tag, .room-mode.player .qr-panel { display: none; }
+  .room-mode.player .room-heading { flex-direction: row; align-items: center; }
+  .room-mode.player .room-tools { width: auto; flex-wrap: nowrap; }
+  .room-mode .brand small { display: none; }
+  .room-mode .event-label { display: none; }
+  .registration-stage { grid-template-columns: 1fr; padding: 4px 0; gap: 22px; }
+  .registration-welcome { text-align: center; }
+  .registration-welcome h1 { font-size: clamp(28px, 5vw, 46px); margin: 14px 0 10px; letter-spacing: -.5px; }
+  .registration-welcome > p { display: none; }
+  .registration-teams { justify-content: center; margin: 18px 0 0; gap: 20px; }
+  .registration-teams > div { display: flex; gap: 8px; }
+  .registration-teams > div > span { width: 32px; border-radius: 10px; }
+  .registration-teams > div:nth-child(2) > span { transform: rotate(5deg); }
+  .registration-teams b { font-size: 10px; }
+  .registration-facts { display: none; }
+  .registration-form .join-panel { padding: 22px; }
+  .registration-form h2 { margin-top: 12px; }
+  .registration-form label { margin-top: 14px; }
+  .registration-form input { min-height: 50px; }
+  .registration-form .primary { margin-top: 20px; min-height: 52px; }
+  .registration-form .back-link { margin-top: 14px; }
+  .room-mode .lobby-banner { flex-direction: column; align-items: stretch; padding: 24px; }
+  .room-mode .lobby-banner h2 { font-size: 32px; }
+  .room-mode .qr-panel { align-self: center; margin: 0; max-width: none; }
+  .room-mode .qr-panel img { width: 180px; }
+  .room-mode .teams-grid { grid-template-columns: 1fr; }
+  .room-mode .team-top h3 { font-size: 24px; }
+  .room-mode .section-heading .muted { font-size: 10px; }
+  .room-mode .section-heading h2 { font-size: 17px; }
+  .room-mode .question-dots { gap: 5px; }
+  .room-mode .question-dots > span { width: 22px; height: 22px; font-size: 10px; }
+  .room-mode .question-dots > b { width: 100%; margin-top: 4px; font-size: 12px; }
+  .room-mode .game-stage { padding: 16px 18px 0; border-radius: 16px; }
+  .room-mode .question-spotlight { flex-direction: row; text-align: left; gap: 14px; min-height: 120px; padding: 16px 0; }
+  .room-mode .question-spotlight h2 { font-size: 20px; line-height: 1.55; }
+  .room-mode .countdown-ring { width: 66px; height: 66px; }
+  .room-mode .countdown-ring::before { inset: 5px; }
+  .room-mode .countdown-ring > span { font-size: 28px; }
+  .room-mode .countdown-ring small { font-size: 9px; }
+  .room-mode .response-count { font-size: 11px; }
+  .room-mode .response-count b { font-size: 21px; }
+  .room-mode .stage-meta { gap: 10px; }
+  .room-mode .stage-meta .pill { font-size: 10px; }
+  .room-mode .live-options { gap: 10px; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, minmax(116px, 1fr)); }
+  .room-mode .live-options .option { padding: 16px; min-height: 116px; flex-direction: column; align-items: flex-start; gap: 8px; border-radius: 14px; }
+  .room-mode .live-options .choice-symbol { min-width: 0; font-size: 25px; }
+  .room-mode .choice-text { font-size: 16px; }
+  .room-mode .choice-text small { display: inline; margin-right: 6px; font-size: 11px; }
+  .room-mode .answer-check { position: absolute; top: 12px; right: 12px; }
+  .room-mode .submit-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .room-mode .submit-row p { font-size: 13px; text-align: center; }
+  .room-mode .submit-row br { display: none; }
+  .room-mode .submit-row small { display: block; }
+  .room-mode.player .submit-row { position: sticky; bottom: 0; z-index: 2; flex-direction: row; align-items: center; padding: 10px; border: 1px solid #ffffff22; border-radius: 14px; background: #281451; box-shadow: 0 -8px 24px #28145180; }
+  .room-mode.player .submit-row p { flex: 1; text-align: left; font-size: 12px; }
+  .room-mode.player .submit-row .primary { flex: 1.25; min-width: 0; width: auto; font-size: 14px; padding: 12px 10px; }
+  .room-mode .host-controls { flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .room-mode .host-controls .primary { min-width: 0; flex: 1; }
+  .room-mode .host-controls .text-button { margin-right: 0; }
+  .room-mode .reveal-panel { grid-template-columns: 1fr; padding: 18px; gap: 16px; }
+  .room-mode .explanation p { font-size: 15px; }
+  .room-mode .countdown-stage { min-height: 380px; padding: 28px 16px; }
+  .room-mode .countdown-stage h2 { font-size: 26px; }
+  .room-mode .leaderboard-stage { padding: 24px 14px; }
+  .room-mode .leaderboard-stage h2 { font-size: 26px; }
+  .room-mode .leaderboard-stage > p { font-size: 12px; }
+  .room-mode .ranking-row { padding: 16px 12px; gap: 10px; flex-wrap: wrap; }
+  .room-mode .ranking-row .place { width: 25px; font-size: 24px; }
+  .room-mode .ranking-row .team-icon { padding: 7px; }
+  .room-mode .ranking-row .icon { width: 24px; height: 24px; }
+  .room-mode .ranking-name h3 { font-size: 22px; }
+  .room-mode .ranking-name > span { font-size: 10px; }
+  .room-mode .ranking-row > strong { font-size: 28px; min-width: 0; margin-left: auto; }
+  .room-mode .rank-change { display: none; }
+  .room-mode .winner h2 { font-size: 32px; }
+  .room-mode .winner .eyebrow { font-size: 8px; }
+  .room-mode .winner p { font-size: 12px; }
+  .podium { padding: 16px 0 0; gap: 8px; }
+  .podium-emblem { width: 48px; }
+  .podium-team h3 { font-size: 16px; letter-spacing: .5px; }
+  .podium-team > p { display: none; }
+  .podium-step { padding: 12px 4px; margin-top: 12px; border-radius: 12px 12px 0 0; min-height: calc(100px + (4 - var(--place)) * 24px); }
+  .podium-rank { font-size: 12px; }
+  .podium-step strong { font-size: clamp(20px, 5.5vw, 36px); }
+  .podium-step small { font-size: 9px; overflow-wrap: anywhere; }
+  .room-mode .takeaways { gap: 8px 14px; }
+  .room-mode .takeaways b { font-size: 11px; }
+  .room-mode .finish-actions { flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-mode *, .room-mode *::before, .room-mode *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

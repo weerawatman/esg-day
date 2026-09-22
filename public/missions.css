@@ -1,0 +1,194 @@
+/* The game's signature: fictional office artifacts on a live quiz stage. */
+.mission-hero .hero-copy { position:relative; z-index:1; }
+.live-hero.mission-hero h1 { font-family:'Leelawadee UI',Tahoma,sans-serif; font-size:clamp(36px,4vw,62px); line-height:1.35; letter-spacing:-1px; }
+.mission-hero .lead { max-width:470px; line-height:1.85; }
+.mission-hero .eyebrow { letter-spacing:1.4px; }
+.mission-poster { position:relative; padding:20px 4px 35px; transform:rotate(2deg); }
+.mission-poster > .office-scene { box-shadow:12px 18px 0 #160b3480; }
+.mission-poster .chat-bubble p { font-size:23px; }
+.mission-poster .scene-content { padding:25px; }
+.mission-poster .poster-teams { margin-top:58px; }
+.mission-stamp { position:absolute; right:-12px; bottom:84px; padding:12px 20px; background:#ffe082; color:#281451; font-size:18px; font-weight:bold; transform:rotate(-7deg); box-shadow:0 5px 0 #c5a447; }
+.office-scene { --office-ink:#30204d; color:var(--office-ink); background:#fffdf7; border:1px solid #d9d2e4; border-radius:14px; overflow:hidden; text-align:left; min-width:0; }
+.scene-toolbar { display:flex; align-items:center; gap:12px; background:#efeaf6; border-bottom:1px solid #dfd7e9; padding:10px 15px; font-size:12px; font-weight:bold; }
+.scene-toolbar small { margin-left:auto; color:#756587; font-size:10px; font-weight:normal; }
+.window-dots { display:flex; gap:4px; flex-shrink:0; }
+.window-dots i { width:6px; height:6px; background:#b3a4c5; border-radius:50%; }
+.window-dots i:first-child { background:#ed8c83; }
+.scene-content { padding:18px 20px; }
+.office-scene h3 { font:700 clamp(16px,1.35vw,24px)/1.5 'Leelawadee UI',Tahoma,sans-serif; margin:0; overflow-wrap:anywhere; }
+.office-scene p { font-size:clamp(16px,1.25vw,22px); line-height:1.65; margin:7px 0; overflow-wrap:anywhere; }
+.scene-caption { border-top:1px solid #e7e1ee; padding:9px 16px; font-size:11px; color:#756587; }
+.chat-sender { display:flex; align-items:center; gap:10px; }
+.office-avatar { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; background:#d9cef0; color:#513877; font-size:15px; flex-shrink:0; }
+.chat-bubble { margin:12px 0 8px 20px; padding:10px 16px; border-radius:0 14px 14px 14px; background:#eee7fb; }
+.chat-bubble p { margin:0; }
+.chat-reply { display:block; text-align:right; font-size:12px; color:#756587; padding:6px 0 0; }
+.scene-file .scene-content { display:flex; align-items:center; gap:22px; }
+.file-preview { width:78px; height:100px; background:white; border:1px solid #cfc3df; border-radius:3px 15px 3px 3px; flex-shrink:0; box-shadow:4px 5px 0 #eee7f6; padding:12px; }
+.file-preview > span { font:bold 12px 'Trebuchet MS',sans-serif; color:#7651e8; }
+.document-lines { display:grid; gap:7px; margin-top:16px; }
+.document-lines i { height:3px; background:#dbd3e7; }
+.document-lines i:nth-child(2) { width:60%; }
+.file-caption { min-width:0; }
+.office-file-list { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.office-file-list > div { display:flex; align-items:center; gap:8px; padding:9px 7px; background:#f1edf7; border:1px solid #e4deed; border-radius:6px; min-width:0; }
+.office-file-list b { font:normal 13px/1.5 'Trebuchet MS',Tahoma,sans-serif; overflow-wrap:anywhere; }
+.office-file-list span { font:bold 12px 'Trebuchet MS',sans-serif; color:#7651e8; }
+.share-settings { display:grid; gap:8px; margin-top:12px; }
+.share-settings > div { display:flex; gap:10px; align-items:center; padding:8px 12px; border:1px solid #dcd3e9; border-radius:6px; font-size:15px; }
+.fake-radio { width:15px; height:15px; border:1.5px solid #a794bd; border-radius:50%; flex-shrink:0; }
+.office-monitor { padding:9px 14px 12px; background:white; border:5px solid #56426f; border-bottom-width:9px; border-radius:7px; }
+.office-monitor h3 { font-size:15px; margin:5px 0; }
+.monitor-bar { display:flex; gap:4px; }
+.monitor-bar i { width:4px; height:4px; border-radius:50%; background:#b4a2c9; }
+.spreadsheet-preview { height:38px; background:repeating-linear-gradient(0deg,transparent 0 11px,#dcd5e7 11px 12px),repeating-linear-gradient(90deg,#f3f0f8 0 44px,#dcd5e7 44px 45px); }
+.coffee-note { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.coffee-note p { font-size:15px; }
+.coffee-note > span { font-size:30px; }
+.mail-subject { display:flex; gap:12px; align-items:center; border-bottom:1px solid #e1d9e9; padding-bottom:8px; }
+.mail-subject > span { font-size:12px; color:#756587; }
+.mail-attachment { display:inline-block; padding:5px 12px; border:1px solid #dcd3e9; background:#f2edf8; border-radius:5px; font-size:13px; }
+.fake-send { display:block; width:max-content; background:#7651e8; color:white; border-radius:6px; padding:5px 20px; margin-top:12px; font:bold 13px/1.5 'Trebuchet MS',sans-serif; }
+.ai-greeting { display:flex; gap:12px; align-items:center; padding:5px 0 14px; }
+.ai-greeting > span { color:#7651e8; font-size:34px; }
+.ai-prompt { border:1px solid #d6cce5; border-radius:10px; padding:10px 14px; background:white; }
+.ai-prompt p { font-size:15px; color:#756587; }
+.ai-prompt > span { display:block; text-align:right; color:#7651e8; font-size:20px; }
+.room-mode .mission-layout { display:grid; grid-template-columns:minmax(0,1.25fr) minmax(280px,.85fr); align-items:center; gap:clamp(24px,3vw,55px); flex:1; padding:18px 0; }
+.room-mode .mission-layout .question-spotlight { display:block; min-height:0; padding:0; }
+.room-mode .mission-layout .question-spotlight h2 { font-size:clamp(24px,2.15vw,42px); line-height:1.6; }
+.room-mode .mission-layout .countdown-ring { float:left; width:70px; height:70px; margin:0 18px 10px 0; }
+.room-mode .mission-layout .countdown-ring > span { font-size:30px; }
+.room-mode .mission-layout .countdown-ring small { font-size:9px; }
+.room-mode .mission-layout .countdown-ring::before { inset:5px; }
+.mission-title { margin:0 0 12px; color:#ffe082; font-size:15px; line-height:1.5; }
+.mission-team { display:flex; align-items:center; gap:9px; }
+.mission-team i { width:9px; height:9px; border-radius:50%; background:var(--team); outline:2px solid #ffffff30; }
+.room-mode .mission-layout .office-scene { transform:rotate(1deg); box-shadow:6px 8px 0 #1a0b3d50; }
+.room-mode .suspense-panel { display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:24px; background:#ffffff0d; border:1px solid #ffffff1f; border-radius:14px; padding:14px 25px; }
+.suspense-copy > span { color:#d0c1e9; font-size:12px; }
+.suspense-copy h3 { color:#ffe082; font-size:24px; line-height:1.5; margin:3px 0; }
+.suspense-copy p { color:#d0c1e9; font-size:13px; margin:0; }
+.suspense-panel .answer-chart b { color:#e1d5f2; }
+.suspense-panel .chart-track { height:40px; }
+.source-slides { display:block; font-size:11px; color:#756587; margin-top:6px; }
+.perfect-teams { display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap; color:#ffe082; padding:8px 12px; border:1px solid #ffe08250; border-radius:10px; background:#ffe0820b; animation:team-cheer .5s ease-out; }
+.perfect-teams > strong { font-size:15px; }
+.perfect-teams > span { font:bold 13px/1.6 'Trebuchet MS',Tahoma,sans-serif; border-left:3px solid var(--team); padding:0 10px; color:white; }
+.perfect-teams small { font:normal 12px 'Leelawadee UI',Tahoma,sans-serif; color:#e7dcfa; margin-left:5px; }
+.ranking-perfect { display:block; color:#146f57; font-size:12px; margin-top:4px; }
+.room-mode .takeaways.mission-takeaway { flex-wrap:wrap; text-align:center; }
+.mission-takeaway > strong { color:#ffe082; font-size:clamp(20px,2vw,32px); }
+.mission-takeaway > strong b { font-size:inherit; }
+.room-mode .takeaways.mission-takeaway > span { color:#e2d5f3; font-size:14px; }
+@keyframes team-cheer { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+@media (min-width:901px) and (max-height:820px) {
+ .room-mode .mission-layout { padding:10px 0 14px; gap:26px; }
+ .room-mode .mission-layout .question-spotlight h2 { font-size:26px; }
+ .room-mode .mission-layout .office-scene { max-width:480px; width:100%; justify-self:end; }
+ .room-mode .mission-layout .scene-content { padding:10px 15px; }
+ .room-mode .mission-layout .scene-caption { padding:6px 12px; }
+ .room-mode .mission-layout .office-scene p { font-size:16px; }
+ .room-mode .mission-layout .office-scene h3 { font-size:17px; }
+ .room-mode .mission-layout .file-preview { height:78px; width:65px; }
+ .mission-title { font-size:13px; margin-bottom:8px; }
+ .room-mode .suspense-panel { padding:8px 20px; }
+ .room-mode .suspense-copy h3 { font-size:20px; }
+ .perfect-teams { padding:5px 10px; }
+}
+@media (min-width:901px) and (max-height:760px) {
+ body.room-mode .topbar { height:48px; }
+ body.room-mode main { gap:8px; padding-top:8px; padding-bottom:8px; }
+ .room-mode .room-heading .eyebrow { display:none; }
+ .room-mode .mission-layout .chat-reply,
+ .room-mode .mission-layout .scene-caption { display:none; }
+ .room-mode .mission-layout .scene-toolbar { padding:7px 12px; }
+ .room-mode .mission-layout .chat-bubble { margin-bottom:2px; }
+ .room-mode .mission-layout { padding:8px 0 12px; }
+ .room-mode .mission-layout .question-spotlight h2 { font-size:24px; }
+ .room-mode .live-options { gap:12px; }
+ .room-mode .live-options .option { padding:9px 20px; }
+ .room-mode .choice-text small { display:inline; margin-right:8px; }
+ .room-mode .mission-layout .fake-send { display:inline-block; margin:5px 0 0 10px; }
+ .room-mode #app[data-phase="reveal"] .mission-title,
+ .room-mode #app[data-phase="closed"] .mission-title { display:none; }
+ .room-mode #app[data-phase="reveal"] .question-spotlight h2 { font-size:22px; line-height:1.45; }
+ .room-mode .host-controls .primary { min-height:46px; padding-top:10px; padding-bottom:10px; }
+}
+@media (max-width:900px) {
+ .room-mode .mission-layout { grid-template-columns:1fr; gap:16px; padding:14px 0 18px; }
+ .room-mode .mission-layout .office-scene { transform:none; box-shadow:none; }
+ .room-mode .mission-layout .question-spotlight h2 { font-size:22px; }
+ .room-mode .mission-layout .countdown-ring { width:58px; height:58px; margin:0 12px 6px 0; }
+ .room-mode .mission-layout .countdown-ring > span { font-size:24px; }
+ .room-mode .mission-layout .scene-content { padding:12px 15px; }
+ .room-mode .mission-layout .office-scene p { font-size:15px; }
+ .room-mode .mission-layout .office-scene h3 { font-size:16px; }
+ .scene-caption { font-size:10px; padding:7px 12px; }
+ .scene-toolbar { padding:8px 12px; font-size:11px; }
+ .mission-title { font-size:13px; }
+ .room-mode .suspense-panel { grid-template-columns:1fr; gap:15px; padding:18px; }
+ .suspense-copy h3 { font-size:22px; }
+ .room-mode .perfect-teams { justify-content:flex-start; }
+ .room-mode .perfect-teams > strong { width:100%; }
+ .mission-poster { max-width:460px; margin:0 auto; width:100%; }
+ .mission-poster .chat-bubble p { font-size:20px; }
+ .mission-stamp { right:0; font-size:16px; }
+ .office-file-list b { font-size:11px; }
+ .ranking-perfect { font-size:10px; }
+}
+@media (prefers-reduced-motion:reduce) { .perfect-teams { animation:none; } }
+
+/* Keep context readable on phones without letting the prop dominate the answers. */
+@media (max-width:600px) {
+ body.room-mode.player .topbar { height:52px; }
+ body.room-mode.player main { padding:10px 14px; gap:9px; }
+ .room-mode.player .room-heading h1 { font-size:22px; }
+ .room-mode.player .room-heading .eyebrow { font-size:9px; }
+ .room-mode.player .room-heading { gap:6px; }
+ .room-mode.player .question-dots > b { font-size:10px; margin-top:0; }
+ .room-mode.player .game-stage { padding:10px 12px 0; }
+ .room-mode.player .mission-layout { gap:10px; padding:10px 0 12px; }
+ .room-mode.player .mission-layout .mission-title { display:none; }
+ .room-mode.player .mission-layout .question-spotlight h2 { font-size:19px; line-height:1.55; }
+ .room-mode.player .mission-layout .countdown-ring { width:46px; height:46px; margin:0 10px 4px 0; }
+ .room-mode.player .mission-layout .countdown-ring > span { font-size:22px; }
+ .room-mode.player .mission-layout .countdown-ring small { font-size:8px; }
+ .room-mode.player .mission-layout .scene-toolbar { padding:5px 10px; font-size:10px; }
+ .room-mode.player .mission-layout .scene-caption,
+ .room-mode.player .mission-layout .chat-reply,
+ .room-mode.player .mission-layout .document-lines,
+ .room-mode.player .mission-layout .spreadsheet-preview { display:none; }
+ .room-mode.player .mission-layout .scene-content { padding:8px 10px; }
+ .room-mode.player .mission-layout .office-scene h3,
+ .room-mode.player .mission-layout .office-scene p { font-size:13px; line-height:1.5; }
+ .room-mode.player .mission-layout .office-scene p { margin:3px 0; }
+ .room-mode.player .mission-layout .chat-sender h3 { font-size:11px; }
+ .room-mode.player .mission-layout .office-avatar { width:20px; height:20px; font-size:11px; }
+ .room-mode.player .mission-layout .chat-bubble { margin:6px 0 0 12px; padding:6px 10px; }
+ .room-mode.player .mission-layout .file-preview { width:39px; height:48px; padding:9px 4px; border-radius:3px 9px 3px 3px; }
+ .room-mode.player .mission-layout .file-preview > span { font-size:10px; }
+ .room-mode.player .mission-layout .scene-file .scene-content { gap:12px; }
+ .room-mode.player .mission-layout .share-settings { grid-template-columns:1fr 1fr; gap:6px; margin-top:6px; }
+ .room-mode.player .mission-layout .share-settings > div { font-size:11px; padding:6px; gap:5px; }
+ .room-mode.player .mission-layout .fake-radio { width:11px; height:11px; }
+ .room-mode.player .mission-layout .office-file-list { margin-top:6px; gap:5px; }
+ .room-mode.player .mission-layout .office-file-list > div { padding:5px; }
+ .room-mode.player .mission-layout .office-monitor { border-width:3px; padding:5px 8px; }
+ .room-mode.player .mission-layout .monitor-bar { display:none; }
+ .room-mode.player .mission-layout .coffee-note > span { font-size:20px; }
+ .room-mode.player .mission-layout .fake-send { display:inline-block; margin:5px 0 0 8px; padding:3px 10px; font-size:11px; }
+ .room-mode.player .mission-layout .mail-subject { padding-bottom:4px; }
+ .room-mode.player .mission-layout .mail-attachment { font-size:11px; padding:3px 8px; }
+ .room-mode.player .mission-layout .ai-greeting { padding:0 0 5px; }
+ .room-mode.player .mission-layout .ai-greeting > span { font-size:22px; }
+ .room-mode.player .mission-layout .ai-prompt { display:flex; align-items:center; justify-content:space-between; padding:6px 10px; }
+ .room-mode.player .live-options { grid-template-rows:repeat(2,minmax(90px,1fr)); gap:8px; }
+ .room-mode.player .live-options .option { min-height:90px; padding:10px 12px; gap:4px; }
+ .room-mode.player .live-options .choice-symbol { font-size:17px; }
+ .room-mode.player .choice-text { font-size:15px; line-height:1.5; }
+ .room-mode.player .submit-row { padding:7px; min-height:56px; gap:8px; }
+ .room-mode.player .submit-row p { margin:0; font-size:10px; }
+ .room-mode.player .submit-row .primary { font-size:12px; padding:10px 8px; }
+}

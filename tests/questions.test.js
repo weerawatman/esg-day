@@ -4,8 +4,30 @@ import { questions, withContent } from '../lib/questions.js';
 
 const validEdit=()=>questions.map(q=>({id:q.id,text:q.text,options:[...q.options],correct:q.correct,explanation:q.explanation}));
 
+test('bundled Thai content stays readable and satisfies the admin content limits',()=>{
+ assert.doesNotThrow(()=>withContent(validEdit()));
+ for(const q of questions){
+  assert.match(q.text,/[\u0E00-\u0E7F]/,'Thai question text must survive file encoding');
+  assert.doesNotMatch(JSON.stringify(q),/\?{3}|\uFFFD/,'no encoding replacement characters');
+ }
+});
+
 test('withContent(null) returns the default bank unedited',()=>{
  assert.deepEqual(withContent(null),questions);
+});
+
+test('office scenes survive an unchanged admin save but disappear when content changes',()=>{
+ const unchanged=withContent(validEdit());
+ assert.ok(unchanged[0].scene,'default scene is present');
+ assert.deepEqual(unchanged[0].sourceSlides,[2,8]);
+ for(const change of [{text:'โจทย์ใหม่'},{options:['ใหม่','สอง','สาม','สี่']},{correct:0},{explanation:'เหตุผลใหม่'}]){
+  const edit=validEdit();edit[0]={...edit[0],...change};
+  const result=withContent(edit);
+  assert.equal(result[0].scene,undefined,'do not show stale scenario after editing');
+  assert.equal(result[0].title,undefined);
+  assert.equal(result[0].sourceSlides,undefined);
+  assert.deepEqual(result[1],questions[1]);
+ }
 });
 test('withContent applies wording edits but keeps id/round/points/seconds fixed to the template',()=>{
  const edit=validEdit();
