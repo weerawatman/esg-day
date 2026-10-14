@@ -52,8 +52,8 @@ export function createApp({persist=true}={}) {
    if(p==='/api/rooms'&&req.method==='POST')return send(game.create(body.demo===true));
    const match=p.match(/^\/api\/rooms\/(\d{6})(?:\/(join|control|answer))?$/);
    if(match){const [,code,action]=match;if(req.method==='GET'&&!action)return send(game.view(code,auth));if(req.method==='POST'){if(action==='join')return send(game.join(code,body.name,body.employeeId,false,body.joinKey??null,body.teamName));if(action==='control')return send(game.control(code,auth,body.action,body));if(action==='answer')return send(game.answer(code,auth,body.q,body.choice))}}
-   const assets={'/':'index.html','/app.js':'app.js','/effects.js':'effects.js','/missions.js':'missions.js','/missions.css':'missions.css','/style.css':'style.css','/live.css':'live.css','/room.css':'room.css','/favicon.svg':'favicon.svg'};
-   if(req.method==='GET'&&assets[p]){const ext=path.extname(assets[p]);res.writeHead(200,{'Content-Type':{'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'}[ext]});return fs.createReadStream(path.join(root,'public',assets[p])).pipe(res)}
+   const assets={'/':'index.html','/app.js':'app.js','/effects.js':'effects.js','/missions.js':'missions.js','/missions.css':'missions.css','/style.css':'style.css','/live.css':'live.css','/room.css':'room.css','/display.css':'display.css','/favicon.svg':'favicon.svg','/fonts/Kanit-Medium.ttf':'fonts/Kanit-Medium.ttf','/fonts/Kanit-Bold.ttf':'fonts/Kanit-Bold.ttf','/fonts/Sarabun-Regular.ttf':'fonts/Sarabun-Regular.ttf','/fonts/Sarabun-Bold.ttf':'fonts/Sarabun-Bold.ttf'};
+   if(req.method==='GET'&&assets[p]){const ext=path.extname(assets[p]);res.writeHead(200,{'Content-Type':{'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.ttf':'font/ttf'}[ext]});return fs.createReadStream(path.join(root,'public',assets[p])).pipe(res)}
    send({error:'ไม่พบหน้านี้'},404);
   }catch(e){send({error:e.message},400)}
  });

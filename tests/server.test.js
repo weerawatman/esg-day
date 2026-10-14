@@ -32,6 +32,8 @@ test('HTTP: three representatives, private host commands, QR and answers',async(
   const reveal=await call(base,`/api/rooms/${room.code}/control`,{action:'reveal'},room.hostToken);
   assert.ok(reveal.data.teams.every(t=>t.score===t.count)||reveal.data.teams.every(t=>t.score===0),'every player answered the same choice, so every team scores identically whichever way question order shuffled');
   const qr=await fetch(base+`/api/qr?url=${encodeURIComponent(base+'/?join='+room.code)}`);assert.match(qr.headers.get('content-type'),/svg/);assert.match(await qr.text(),/<svg/);
+  const font=await fetch(base+'/fonts/Kanit-Bold.ttf');assert.equal(font.status,200);assert.match(font.headers.get('content-type'),/font\/ttf/);
+  assert.equal((await fetch(base+'/display.css')).status,200);
   assert.equal((await fetch(base+'/lib/questions.js')).status,404);
   assert.equal((await fetch(base+'/')).status,200);
  }finally{await new Promise(r=>server.close(r))}

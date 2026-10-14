@@ -1,0 +1,193 @@
+@font-face {
+  font-family: Kanit;
+  src: url('/fonts/Kanit-Medium.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: Kanit;
+  src: url('/fonts/Kanit-Bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: Sarabun;
+  src: url('/fonts/Sarabun-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Sarabun;
+  src: url('/fonts/Sarabun-Bold.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+body { font-family: Sarabun, Tahoma, sans-serif; font-size: 16px; line-height: 1.55; }
+body :is(h1, h2, h3, .brand, .primary, .secondary, .round-num, .team-score b, .ranking-row > strong) { font-family: Kanit, 'Leelawadee UI', sans-serif; letter-spacing: 0; }
+body .live-hero.mission-hero h1, body .office-scene h3 { font-family: Kanit, 'Leelawadee UI', sans-serif; letter-spacing: 0; }
+body .office-scene p { font-family: Sarabun, Tahoma, sans-serif; }
+body .eyebrow, body .pill { font-size: 14px; }
+body .micro, body .muted { font-size: 14px; }
+body .round-card p, body .join-strip p { font-size: 15px; }
+body .round-card h3 { font-size: 21px; }
+
+body.room-mode { font-family: Sarabun, Tahoma, sans-serif; }
+body.room-mode main { gap: clamp(8px, 1.1vh, 14px); }
+body.room-mode .brand { font-size: 20px; }
+body.room-mode .brand small { font-family: Sarabun, Tahoma, sans-serif; font-size: 10px; }
+body.room-mode .connection, body.room-mode .event-label { font-size: 13px; }
+body.room-mode .room-heading h1 { font-size: clamp(28px, 2.7vw, 46px); line-height: 1.18; }
+body.room-mode .room-heading .eyebrow { font-size: 13px; }
+body.room-mode .room-tag { font-size: 13px; }
+body.room-mode .room-tag b { font-family: Kanit, sans-serif; font-size: clamp(28px, 2.6vw, 42px); line-height: 1.1; }
+body.room-mode .primary, body.room-mode .secondary { font-size: 17px; }
+body.room-mode .text-button { font-size: 15px; }
+body.room-mode .question-dots > span { width: clamp(27px, 2.1vw, 36px); height: clamp(27px, 2.1vw, 36px); font: 500 14px Kanit, sans-serif; }
+body.room-mode .question-dots > b { font-size: 16px; }
+
+/* Questions and choices are the stage's primary information. */
+body.room-mode .game-stage { flex: 1 1 auto; min-height: 0; }
+body.room-mode .stage-meta .pill { font-size: 16px; }
+body.room-mode .response-count { font-size: 16px; }
+body.room-mode .response-count b { font: 700 30px Kanit, sans-serif; }
+body.room-mode .mission-layout { min-height: 0; padding-block: clamp(8px, 1.2vh, 18px); }
+body.room-mode .mission-layout .question-spotlight h2 { font: 700 clamp(30px, 2.65vw, 49px)/1.32 Kanit, 'Leelawadee UI', sans-serif; }
+body.room-mode .mission-title { font: 500 clamp(17px, 1.2vw, 22px)/1.3 Kanit, sans-serif; margin-bottom: 8px; }
+body.room-mode .countdown-ring > span { font-family: Kanit, sans-serif; }
+body.room-mode .countdown-ring small { font-size: 13px; }
+body.room-mode .live-options { flex: 1.05 1 auto; min-height: 0; grid-template-rows: repeat(2, minmax(88px, 1fr)); gap: clamp(10px, 1.2vh, 18px); }
+body.room-mode .live-options .option { min-height: 88px; padding: clamp(11px, 1.6vh, 23px) clamp(16px, 2vw, 36px); gap: clamp(12px, 1.4vw, 26px); }
+body.room-mode .choice-text { font: 500 clamp(23px, 1.8vw, 34px)/1.27 Kanit, 'Leelawadee UI', sans-serif; }
+body.room-mode .choice-text small { font: 700 15px Sarabun, sans-serif; opacity: 1; }
+body.room-mode .live-options .choice-symbol { font-family: Kanit, sans-serif; font-size: clamp(34px, 2.7vw, 52px); }
+body.room-mode .submit-row p, body.room-mode .submit-row .primary, body.room-mode .host-controls .primary { font-size: 17px; }
+body.room-mode .submit-row small { font-size: 14px; }
+body.room-mode .answer-status { font-size: 17px; }
+body.room-mode .explanation p { font-size: clamp(17px, 1.15vw, 21px); line-height: 1.42; }
+body.room-mode .explanation .eyebrow, body.room-mode .source-slides { font-size: 14px; }
+body.room-mode .answer-chart b, body.room-mode .answer-chart > div > span { font-size: 14px; }
+body.room-mode .perfect-teams > strong { font-size: 17px; }
+body.room-mode .perfect-teams > span, body.room-mode .perfect-teams small { font-size: 15px; }
+
+/* The office prop stays legible while yielding space to the question. */
+body.room-mode .mission-layout .office-scene h3 { font: 500 clamp(17px, 1.35vw, 24px)/1.32 Kanit, sans-serif; }
+body.room-mode .mission-layout .office-scene p { font-size: clamp(17px, 1.2vw, 22px); line-height: 1.4; }
+body.room-mode .mission-layout .scene-toolbar, body.room-mode .mission-layout .scene-caption { font-size: 14px; }
+body.room-mode .mission-layout .scene-toolbar small, body.room-mode .mission-layout .chat-reply { font-size: 12px; }
+
+/* Waiting, rankings and results use the same display scale. */
+body.room-mode .lobby-banner h2 { font-size: clamp(38px, 4.4vh, 62px); line-height: 1.16; }
+body.room-mode .lobby-banner p { font-size: clamp(17px, 1.2vw, 22px); }
+body.room-mode .status-pill, body.room-mode .block, body.room-mode .lobby-stats small, body.room-mode .lobby-stats > span { font-size: 16px; }
+body.room-mode .lobby-banner .block { font-size: 15px; }
+body.room-mode .timer-setting label, body.room-mode .timer-setting select { font-size: 16px; }
+body.room-mode .qr-panel > span, body.room-mode .qr-panel .text-button { font-size: 15px; }
+body.room-mode .network { font-size: 14px; }
+body.room-mode .section-heading h2 { font-size: clamp(22px, 1.8vw, 30px); }
+body.room-mode .section-heading .muted { font-size: 15px; }
+body.room-mode .team-top h3 { font-size: clamp(25px, 2vw, 34px); }
+body.room-mode .team-top small, body.room-mode .member-count, body.room-mode .team-thai, body.room-mode .member { font-size: 16px; }
+body.room-mode .team-thai { margin: 4px 0 8px; }
+body.room-mode .roster { min-height: 0; }
+body.room-mode .countdown-stage h2 { font-size: clamp(32px, 3.4vw, 60px); }
+body.room-mode .countdown-stage p { font-size: 22px; }
+body.room-mode .leaderboard-stage h2 { font-size: clamp(36px, 3.5vw, 62px); }
+body.room-mode .leaderboard-stage { overflow: hidden; }
+body.room-mode .leaderboard-stage > p, body.room-mode .comeback-line { font-size: 17px; }
+body.room-mode .ranking-name h3 { font-size: clamp(30px, 2.5vw, 48px); }
+body.room-mode .ranking-name > span, body.room-mode .ranking-perfect { font-size: 16px; }
+body.room-mode .ranking-row > strong { font-size: clamp(39px, 3.2vw, 58px); }
+body.room-mode .ranking-row strong small { font-size: 14px; }
+body.room-mode .winner h2 { font-size: clamp(40px, 4vw, 72px); }
+body.room-mode .winner p, body.room-mode .podium-team > p, body.room-mode .podium-rank, body.room-mode .podium-step small { font-size: 16px; }
+body.room-mode .podium-team h3 { font: 700 clamp(26px, 2.7vw, 48px)/1.25 Kanit, sans-serif; letter-spacing: 0; }
+body.room-mode .podium-step strong { font-family: Kanit, sans-serif; }
+body.room-mode .takeaways.mission-takeaway > span { font-size: 16px; }
+
+/* Sign-in controls keep their labels and typed text prominent. */
+body.room-mode .registration-welcome h1 { font-family: Kanit, sans-serif; line-height: 1.18; }
+body.room-mode .registration-teams b { font: 500 17px Kanit, sans-serif; letter-spacing: 0; }
+body.room-mode .registration-form h2 { font-size: clamp(30px, 2.8vw, 44px); }
+body.room-mode .registration-form p, body.room-mode .registration-form label { font-size: 17px; }
+body.room-mode .registration-form input { font-size: 19px; }
+body.room-mode .registration-form .primary { font-size: 19px; }
+body.room-mode .registration-form small { font-size: 14px; }
+
+@media (min-width: 901px) and (max-height: 820px) {
+  body.room-mode .topbar { height: 54px; }
+  body.room-mode main { padding-top: 10px; padding-bottom: 10px; gap: 8px; }
+  body.room-mode .room-heading h1 { font-size: 29px; }
+  body.room-mode .question-dots > span { width: 28px; height: 28px; }
+  body.room-mode .mission-layout .question-spotlight h2 { font-size: clamp(31px, 2.55vw, 39px); }
+  body.room-mode .question-spotlight { padding-block: 10px; }
+  body.room-mode .live-options { grid-template-rows: repeat(2, minmax(84px, 1fr)); }
+  body.room-mode .live-options .option { min-height: 84px; padding: 10px 18px; }
+  body.room-mode .choice-text { font-size: clamp(22px, 1.75vw, 28px); }
+  body.room-mode .lobby-banner h2 { font-size: 39px; }
+  body.room-mode #app[data-phase="reveal"] .question-spotlight h2 { font-size: 29px; }
+  body.room-mode #app[data-phase="reveal"] .choice-text { font-size: 22px; }
+  body.room-mode #app[data-phase="reveal"] .live-options .option { min-height: 68px; padding: 8px 17px; }
+  body.room-mode #app[data-phase="reveal"] .live-options { grid-template-rows: repeat(2, minmax(68px, 1fr)); }
+  body.room-mode .ranking-name h3 { font-size: 32px; }
+  body.room-mode .ranking-row > strong { font-size: 42px; }
+  body.room-mode .leaderboard-stage { padding-top: 12px; padding-bottom: 12px; }
+  body.room-mode .registration-stage { padding: 8px 4vw; }
+  body.room-mode .registration-form .join-panel { padding: 18px 30px; }
+  body.room-mode .registration-form h2 { font-size: 35px; margin: 8px 0 4px; }
+  body.room-mode .registration-form p { margin: 4px 0; }
+  body.room-mode .registration-form label { margin-top: 11px; margin-bottom: 4px; }
+  body.room-mode .registration-form input { min-height: 50px; }
+  body.room-mode .registration-form .primary { min-height: 52px; margin-top: 16px; }
+  body.room-mode .registration-form small { margin-top: 10px; }
+  body.room-mode .registration-form .back-link { margin-top: 12px; }
+}
+
+@media (max-width: 900px) {
+  body.room-mode .room-heading h1 { font-size: 27px; }
+  body.room-mode .question-dots > span { width: 25px; height: 25px; font-size: 11px; }
+  body.room-mode .question-dots > b { font-size: 13px; }
+  body.room-mode .mission-layout .question-spotlight h2 { font-size: 23px; line-height: 1.32; }
+  body.room-mode .choice-text { font-size: 18px; line-height: 1.3; }
+  body.room-mode .choice-text small { font-size: 13px; }
+  body.room-mode .live-options { grid-template-rows: repeat(2, minmax(98px, 1fr)); }
+  body.room-mode .live-options .option { min-height: 98px; padding: 12px; }
+  body.room-mode .live-options .choice-symbol { font-size: 26px; }
+  body.room-mode .stage-meta .pill, body.room-mode .response-count { font-size: 13px; }
+  body.room-mode .mission-layout .office-scene h3, body.room-mode .mission-layout .office-scene p { font-size: 15px; }
+  body.room-mode .mission-layout .scene-toolbar, body.room-mode .mission-layout .scene-caption { font-size: 12px; }
+  body.room-mode .leaderboard-stage > p, body.room-mode .comeback-line { font-size: 14px; }
+  body.room-mode .ranking-name h3 { font-size: 24px; }
+  body.room-mode .ranking-name > span, body.room-mode .ranking-perfect { font-size: 13px; }
+  body.room-mode .ranking-row > strong { font-size: 32px; }
+  body.room-mode .ranking-row strong small { font-size: 12px; }
+  body.room-mode .registration-welcome h1 { font-size: clamp(30px, 5vw, 46px); }
+  body.room-mode .registration-form label, body.room-mode .registration-form p { font-size: 16px; }
+  body.room-mode .registration-form input { font-size: 18px; }
+  body.room-mode .registration-form .primary { font-size: 17px; }
+}
+
+@media (max-width: 600px) {
+  body.room-mode .registration-stage { gap: 12px; }
+  body.room-mode .registration-welcome h1 { margin: 8px 0 6px; }
+  body.room-mode .registration-teams { margin-top: 10px; }
+  body.room-mode .registration-form .join-panel { padding: 18px; }
+  body.room-mode .registration-form h2 { margin: 8px 0 4px; }
+  body.room-mode .registration-form p { margin: 4px 0; }
+  body.room-mode .registration-form label { margin-top: 9px; margin-bottom: 4px; }
+  body.room-mode .registration-form input { min-height: 48px; }
+  body.room-mode .registration-form .primary { min-height: 50px; margin-top: 12px; }
+  body.room-mode .registration-form small { margin-top: 10px; }
+  body.room-mode .registration-form .back-link { margin-top: 8px; }
+  body.room-mode.player .room-heading h1 { font-size: 23px; }
+  body.room-mode.player .mission-layout .question-spotlight h2 { font-size: 22px; }
+  body.room-mode.player .choice-text { font-size: 17px; }
+  body.room-mode.player .live-options { grid-template-rows: repeat(2, minmax(94px, 1fr)); }
+  body.room-mode.player .live-options .option { min-height: 94px; }
+  body.room-mode.player .submit-row p { font-size: 13px; }
+  body.room-mode.player .submit-row .primary { font-size: 16px; }
+}
