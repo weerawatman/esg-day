@@ -97,7 +97,8 @@ body.room-mode .roster { min-height: 0; }
 body.room-mode .countdown-stage h2 { font-size: clamp(32px, 3.4vw, 60px); }
 body.room-mode .countdown-stage p { font-size: 22px; }
 body.room-mode .leaderboard-stage h2 { font-size: clamp(36px, 3.5vw, 62px); }
-body.room-mode .leaderboard-stage { overflow: hidden; }
+/* Never clip the leaderboard: centre it when it fits, otherwise let the page scroll from the top. */
+body.room-mode .leaderboard-stage { overflow: visible; justify-content: safe center; }
 body.room-mode .leaderboard-stage > p, body.room-mode .comeback-line { font-size: 17px; }
 body.room-mode .ranking-name h3 { font-size: clamp(30px, 2.5vw, 48px); }
 body.room-mode .ranking-name > span, body.room-mode .ranking-perfect { font-size: 16px; }
@@ -215,6 +216,19 @@ body.room-mode .registration-form small { font-size: 14px; }
   body.room-mode.player .reveal-panel { padding: 14px; gap: 12px; }
   body.room-mode.player .explanation p { font-size: 17px; line-height: 1.5; }
   body.room-mode.player .chart-track { height: 56px; }
+}
+
+/* Desktop leaderboard scales with screen height as well as width, so shorter browser windows still fit. */
+@media (min-width: 901px) {
+  body.room-mode .leaderboard-stage { padding-block: clamp(12px, 2.2vh, 40px); }
+  body.room-mode .leaderboard-stage h2 { font-size: clamp(28px, min(3.5vw, 5.6vh), 62px); line-height: 1.25; margin: 2px 0; }
+  body.room-mode .ranking-list { margin: clamp(8px, 1.8vh, 24px) auto; gap: clamp(8px, 1.4vh, 20px); }
+  body.room-mode .ranking-row { padding-block: clamp(6px, 1.3vh, 20px); }
+  body.room-mode .ranking-name h3 { font-size: clamp(22px, min(2.5vw, 4.4vh), 48px); line-height: 1.25; }
+  body.room-mode .ranking-row > strong { font-size: clamp(28px, min(3.2vw, 5.4vh), 58px); display: flex; align-items: baseline; gap: 8px; }
+  body.room-mode .ranking-list.many-teams .ranking-name h3 { font-size: clamp(18px, min(1.6vw, 3vh), 30px); }
+  body.room-mode .ranking-list.many-teams .ranking-row > strong { font-size: clamp(22px, min(2.1vw, 3.6vh), 40px); }
+  body.room-mode .ranking-list.many-teams .ranking-row { padding-block: clamp(4px, .8vh, 12px); }
 }
 
 /* Unlimited teams: empty lobby, compact leaderboard for many teams, podium overflow list. */
