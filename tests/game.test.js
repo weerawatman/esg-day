@@ -32,6 +32,21 @@ test('representatives sign in with only a team name and get unique internal IDs'
  assert.ok(view.players.every(p=>p.employeeId===undefined));
 });
 
+test('host can end the game early; only revealed questions count',()=>{
+ let now=1000;
+ const game=new Game({now:()=>now,choose:()=>0}),room=game.create();
+ const p=game.join(room.code,undefined,undefined,false,null,'ทีมเดียว');
+ assert.throws(()=>game.control(room.code,'bad','end'),/ผู้ดำเนินกิจกรรม/);
+ game.control(room.code,room.hostToken,'start');now+=3000;
+ game.answer(room.code,p.token,0,game.rooms[room.code].rules.questions[0].correct);now+=30000;
+ game.control(room.code,room.hostToken,'reveal');game.control(room.code,room.hostToken,'leaderboard');game.control(room.code,room.hostToken,'next');now+=3000;
+ game.answer(room.code,p.token,1,game.rooms[room.code].rules.questions[1].correct);
+ game.control(room.code,room.hostToken,'end');
+ const v=game.view(room.code);
+ assert.equal(v.phase,'finished');assert.equal(v.endedEarly,true);assert.equal(v.teams[0].score,2,'question 2 was never revealed, so it does not count');
+ assert.throws(()=>game.control(room.code,room.hostToken,'end'),/จบไปแล้ว/);
+});
+
 test('rooms saved with three preset team slots fill those before adding more',()=>{
  const game=new Game({choose:()=>0}),room=game.create();
  game.rooms[room.code].rules.teams=[0,1,2].map(i=>({...teamStyle(i),name:`ทีม ${i+1}`}));
