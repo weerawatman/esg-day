@@ -2,7 +2,63 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Game } from '../lib/game.js';
 import { questions } from '../lib/questions.js';
-function setup(n=20){let now=1000;const game=new Game({now:()=>now,choose:n=>n-1});const room=game.create();const players=Array.from({length:n},(_,i)=>game.join(room.code,`ผู้เล่น ${i+1}`,`EMP${i+1}`));const tick=ms=>now+=ms;const start=()=>{game.control(room.code,room.hostToken,'start');tick(3000)};return {game,room,players,tick,start}}
+function setup(n=20){let now=1000;const game=new Game({now:()=>now,choose:n=>n-1});const room=game.create();game.rooms[room.code].rules.version=2;const players=Array.from({length:n},(_,i)=>game.join(room.code,`ผู้เล่น ${i+1}`,`EMP${i+1}`));const tick=ms=>now+=ms;const start=()=>{game.control(room.code,room.hostToken,'start');tick(3000)};return {game,room,players,tick,start}}
+
+test('representatives name the three teams and a fourth person cannot join',()=>{
+ const game=new Game({choose:()=>0}),room=game.create();
+ const names=['ทีมดาวเหนือ','ทีมสายฟ้า','ทีมรักษ์ข้อมูล'];
+ const players=names.map((teamName,i)=>game.join(room.code,`ตัวแทน ${i+1}`,`REP${i+1}`,false,null,teamName));
+ const view=game.view(room.code);
+ assert.equal(view.version,3);
+ assert.deepEqual(view.teams.map(t=>t.name),names);
+ assert.deepEqual(view.teams.map(t=>t.count),[1,1,1]);
+ assert.deepEqual(players.map(p=>p.team),[0,1,2]);
+ assert.throws(()=>game.join(room.code,'คนที่สี่','REP4',false,null,'ทีมที่สี่'),/ครบ 3 ทีม/);
+ assert.throws(()=>game.control(room.code,room.hostToken,'move',{playerId:players[0].id,team:1}),/ย้ายทีม/);
+});
+
+test('team names are required, unique, and safe to retry after joining',()=>{
+ const game=new Game({choose:()=>0}),room=game.create(),key='a'.repeat(48);
+ assert.throws(()=>game.join(room.code,'หนึ่ง','REP1',false,null,''),/ชื่อทีม/);
+ assert.throws(()=>game.join(room.code,'หนึ่ง','REP1',false,null,' '.repeat(3)),/ชื่อทีม/);
+ assert.throws(()=>game.join(room.code,'หนึ่ง','REP1',false,null,'ก'.repeat(25)),/ชื่อทีม/);
+ const first=game.join(room.code,'หนึ่ง','REP1',false,key,'ทีม เอ');
+ assert.throws(()=>game.join(room.code,'สอง','REP2',false,null,'ทีม เอ'),/ชื่อทีมนี้/);
+ const retry=game.join(room.code,'หนึ่ง','rep1',false,key,'ทีม เอ');
+ assert.equal(retry.token,first.token);
+ assert.equal(game.view(room.code).players.length,1);
+});
+
+test('host can start with one representative and unoccupied teams cannot win',()=>{
+ const game=new Game({choose:()=>0}),room=game.create();
+ assert.throws(()=>game.control(room.code,room.hostToken,'start'),/ตัวแทน/);
+ const p=game.join(room.code,'หนึ่ง','REP1',false,null,'ทีมหนึ่ง');
+ game.control(room.code,room.hostToken,'start');
+ const view=game.view(room.code,p.token);
+ assert.equal(view.phase,'countdown');
+ assert.deepEqual(view.teams.map(t=>t.rank),[1,2,2]);
+});
+
+test('representative answers score their named teams through all ten questions',()=>{
+ let now=1000;
+ const game=new Game({now:()=>now,choose:()=>0}),room=game.create();
+ const players=['ทีม ก','ทีม ข','ทีม ค'].map((teamName,i)=>game.join(room.code,`คน ${i+1}`,`REP${i+1}`,false,null,teamName));
+ game.control(room.code,room.hostToken,'start');now+=3000;
+ for(let q=0;q<10;q++){
+  const correct=game.rooms[room.code].rules.questions[q].correct;
+  game.answer(room.code,players[0].token,q,correct);
+  game.answer(room.code,players[1].token,q,(correct+1)%4);
+  game.answer(room.code,players[2].token,q,correct);
+  game.control(room.code,room.hostToken,'reveal');
+  game.control(room.code,room.hostToken,'leaderboard');
+  game.control(room.code,room.hostToken,'next');now+=3000;
+ }
+ const view=game.view(room.code);
+ assert.equal(view.phase,'finished');
+ assert.deepEqual(view.teams.map(t=>t.name),['ทีม ก','ทีม ข','ทีม ค']);
+ assert.deepEqual(view.teams.map(t=>t.score),[10,0,10]);
+ assert.deepEqual(view.teams.map(t=>t.rank),[1,3,1]);
+});
 
 test('new rooms default to 30 seconds and keep office scenes with shuffled questions',()=>{
  const {game,room,start}=setup();assert.equal(game.view(room.code).settings.seconds,30);
@@ -28,7 +84,7 @@ test('closed phase shows only answer counts; all-correct badges require every te
  other.game.control(other.room.code,other.room.hostToken,'void');
  assert.deepEqual(other.game.view(other.room.code).perfectTeamIds,[]);
 });
-test('20 employees randomized among minimum-size teams, yielding 7/7/6; unique IDs and roster locking',()=>{
+test('existing multi-player rooms keep balanced assignment, unique IDs and roster locking',()=>{
  const {game,room,players,start}=setup();assert.equal(players[0].team,2,'choose random tie result instead of first team');assert.deepEqual([0,1,2].map(t=>players.filter(p=>p.team===t).length).sort(),[6,7,7]);
  assert.throws(()=>game.join(room.code,'  ','EMP50'));assert.throws(()=>game.join(room.code,'ใหม่',' emp1 '));assert.throws(()=>game.join(room.code,'ใหม่',''));assert.throws(()=>game.control(room.code,room.hostToken,'move',{playerId:players[0].id,team:3}));assert.equal(game.view(room.code).players[0].employeeId,undefined);
  start();assert.throws(()=>game.join(room.code,'late','EMP50'));assert.throws(()=>game.control(room.code,room.hostToken,'move',{playerId:players[0].id,team:0}));
@@ -45,7 +101,7 @@ test('solutions and histogram hidden; duplicate/stale answers rejected; reveal s
  v=game.view(room.code,players[0].token);assert.equal(v.teams[2].score,1);assert.equal(v.question.correct,1);assert.deepEqual(v.distribution,[0,1,0,0]);assert.equal(v.me.gained,1);assert.throws(()=>game.control(room.code,room.hostToken,'reveal'));assert.throws(()=>game.control(room.code,room.hostToken,'next'));
  game.control(room.code,room.hostToken,'leaderboard');assert.equal(game.view(room.code).phase,'leaderboard');game.control(room.code,room.hostToken,'next');tick(3000);assert.throws(()=>game.answer(room.code,players[0].token,0,1));
 });
-test('ten questions, 10 points/player; 7/7/6 teams share perfect normalized rank; separate new room',()=>{
+test('existing multi-player room keeps 10-point scoring and normalized rank; new room stays separate',()=>{
  const {game,room,players,start,tick}=setup();start();const answers=questions.map(q=>q.correct);answers.forEach((a,q)=>{players.forEach(p=>game.answer(room.code,p.token,q,a));assert.equal(game.view(room.code).phase,'closed');game.control(room.code,room.hostToken,'reveal');game.control(room.code,room.hostToken,'leaderboard');game.control(room.code,room.hostToken,'next');tick(3000)});
  const v=game.view(room.code);assert.equal(v.phase,'finished');assert.equal(v.total,10);assert.equal(v.teams.length,3);v.teams.forEach(t=>{assert.equal(t.score,t.count*10);assert.equal(t.percent,100);assert.equal(t.rank,1)});const next=game.create();assert.notEqual(next.code,room.code);assert.equal(game.view(next.code).players.length,0);assert.equal(game.view(room.code).players[0].score,10);
 });

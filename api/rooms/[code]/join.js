@@ -6,6 +6,6 @@ export default withRoute(async (req, res) => {
  checkOrigin(req);
  const {code} = req.query;
  const store = roomStore(supabase());
- const result = await store.withRoom(code, rooms => new Game({rooms}).join(code, req.body?.name, req.body?.employeeId, false, req.body?.joinKey ?? null));
+ const result = await store.withRoom(code, rooms => new Game({rooms}).join(code, req.body?.name, req.body?.employeeId, false, req.body?.joinKey ?? null, req.body?.teamName));
  send(res, 200, result);
 });

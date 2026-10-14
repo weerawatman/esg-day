@@ -19,15 +19,17 @@ try {
  await page.getByRole('button',{name:/เปิดห้องกิจกรรม/}).click();await page.waitForURL(/host=/);
  const code=new URL(page.url()).searchParams.get('host');
  let loseFirstJoin=true;await player.route('**/api/rooms/*/join',async route=>{if(loseFirstJoin){loseFirstJoin=false;await route.fetch();await route.abort('failed')}else await route.continue()});
- await player.goto(`${base}/?join=${code}`);await player.getByLabel('รหัสพนักงาน',{exact:true}).fill('EMP0');await player.getByLabel('ชื่อเล่นที่เพื่อนจะเห็น').fill('มายด์');await player.getByRole('button',{name:/สุ่มทีมแล้วเข้าเล่น/}).click();
- await player.locator('#toast.visible').waitFor();await player.getByRole('button',{name:/สุ่มทีมแล้วเข้าเล่น/}).click();
+ await player.goto(`${base}/?join=${code}`);await player.getByLabel('รหัสพนักงาน',{exact:true}).fill('EMP0');await player.getByLabel('ชื่อเล่นที่เพื่อนจะเห็น').fill('มายด์');await player.getByLabel('ชื่อทีม',{exact:true}).fill('ทีมดาวเหนือ');await player.getByRole('button',{name:/ตั้งชื่อทีมแล้วเข้าเล่น/}).click();
+ await player.locator('#toast.visible').waitFor();await player.getByRole('button',{name:/ตั้งชื่อทีมแล้วเข้าเล่น/}).click();
  await player.getByRole('button',{name:'พร้อมลุยกับทีมนี้!'}).click();
  await player.getByText('คุณอยู่ทีม').waitFor({timeout:8000});
  const call=async(path,body,token)=>{const r=await fetch(base+path,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:body?JSON.stringify(body):undefined});const data=await r.json();assert.equal(r.ok,true,JSON.stringify(data));return data};
  await page.locator('.network summary').click();
  await page.locator('#base-url').fill('http://192.168.1.123:3000');
- const others=[];for(let i=1;i<20;i++)others.push(await call(`/api/rooms/${code}/join`,{name:`เพื่อน ${i}`,employeeId:`EMP${i}`}));
- await page.waitForFunction(()=>document.querySelector('.lobby-stats b')?.textContent.startsWith('20'));
+ const others=[];for(let i=1;i<3;i++)others.push(await call(`/api/rooms/${code}/join`,{name:`เพื่อน ${i}`,employeeId:`EMP${i}`,teamName:`ทีมทดสอบ ${i}`}));
+ await page.waitForFunction(()=>document.querySelector('.lobby-stats b')?.textContent.startsWith('3'));
+ assert.equal(await page.locator('.team-card').count(),3);
+ assert.equal(await page.getByText('ทีมดาวเหนือ',{exact:true}).count(),1);
  assert.equal(await page.locator('#base-url').inputValue(),'http://192.168.1.123:3000','unsaved QR address survives new joins');
  assert.equal(await page.locator('.network').evaluate(el=>el.open),true,'network details remains open');
  await page.locator('.network summary').click();await page.getByLabel('เวลาตอบแต่ละข้อ').selectOption('30');await screenshot(page,'host-lobby');await screenshot(player,'player-lobby');
@@ -70,8 +72,8 @@ try {
  await player.getByText('ภารกิจสำเร็จ!',{exact:true}).waitFor();await screenshot(player,'winner-mobile');await overflow(player);
  const downloadEvent=page.waitForEvent('download');await page.getByRole('button',{name:/ดาวน์โหลดผล/}).click();const download=await downloadEvent;assert.match(download.suggestedFilename(),new RegExp(code));
  await page.getByRole('button',{name:/เปิดห้องสำหรับกลุ่มถัดไป/}).click();await page.waitForURL(url=>url.searchParams.get('host')!==code);assert.notEqual(new URL(page.url()).searchParams.get('host'),code);
- const final=await call(`/api/rooms/${code}`);assert.equal(final.total,10);assert.deepEqual(final.teams.map(t=>t.count).sort(),[6,7,7]);assert.ok(final.teams.every(t=>t.percent===100&&t.score===t.count*10&&t.rank===1));assert.ok(final.players.every(p=>p.employeeId===undefined));
+ const final=await call(`/api/rooms/${code}`);assert.equal(final.total,10);assert.deepEqual(final.teams.map(t=>t.count),[1,1,1]);assert.ok(final.teams.every(t=>t.percent===100&&t.score===10&&t.rank===1));assert.ok(final.players.every(p=>p.employeeId===undefined));
  await page.goto(base);await page.getByRole('button',{name:/ลองเล่นโหมดสาธิต/}).click();await page.waitForURL(/host=/);await page.getByRole('button',{name:/เริ่มภารกิจ/}).click();await page.getByRole('button',{name:/เปิดเฉลยและให้คะแนน/}).waitFor({timeout:12000});
  await screenshot(page,'demo-question');assert.deepEqual(errors,[]);
- console.log('PASS: employee sign-in with lost-response retry, team reveal, 20 players in 3 random balanced teams, 3-2-1, live timer, audio toggle, 10 questions, histogram, leaderboard, 7/7/6 fair ties, refresh, export, new room, demo, public screen, mobile layouts.');
+ console.log('PASS: representative sign-in with lost-response retry, named teams, three players, 3-2-1, live timer, audio toggle, 10 questions, histogram, leaderboard, refresh, export, new room, demo, public screen, mobile layouts.');
 } finally {await browser.close()}

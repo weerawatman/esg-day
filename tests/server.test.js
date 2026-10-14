@@ -2,16 +2,29 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../server.js';
 const call=async(base,path,body,token)=>{const res=await fetch(base+path,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{})},body:body?JSON.stringify(body):undefined});return {status:res.status,data:await res.json()}};
-test('HTTP: 20 concurrent players, private host commands, QR, restart-safe storage callback',async()=>{
+test('HTTP: each representative submits a team name and fills one of three slots',async()=>{
+ const server=createApp({persist:false});await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const base=`http://127.0.0.1:${server.address().port}`;
+ try{
+  const {data:room}=await call(base,'/api/rooms',{});
+  const joined=await Promise.all(Array.from({length:3},(_,i)=>call(base,`/api/rooms/${room.code}/join`,{name:`ผู้แทน ${i+1}`,employeeId:`REP${i+1}`,teamName:`กลุ่ม ${i+1}`})));
+  assert.ok(joined.every(r=>r.status===200));
+  assert.equal((await call(base,`/api/rooms/${room.code}/join`,{name:'คนที่สี่',employeeId:'REP4',teamName:'กลุ่ม 4'})).status,400);
+  const view=(await call(base,`/api/rooms/${room.code}`)).data;
+  assert.deepEqual(view.teams.map(t=>t.count),[1,1,1]);
+  assert.deepEqual(new Set(view.teams.map(t=>t.name)),new Set(['กลุ่ม 1','กลุ่ม 2','กลุ่ม 3']));
+ }finally{await new Promise(r=>server.close(r))}
+});
+test('HTTP: three representatives, private host commands, QR and answers',async()=>{
  const server=createApp({persist:false});await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const base=`http://127.0.0.1:${server.address().port}`;
  try {
   const {data:room}=await call(base,'/api/rooms',{});
-  const joined=await Promise.all(Array.from({length:20},(_,i)=>call(base,`/api/rooms/${room.code}/join`,{name:`P${i}`,employeeId:`EMP${i}`})));
+  const joined=await Promise.all(Array.from({length:3},(_,i)=>call(base,`/api/rooms/${room.code}/join`,{name:`P${i}`,employeeId:`EMP${i}`,teamName:`ทีม ${i+1}`})));
   assert.ok(joined.every(r=>r.status===200));
   assert.equal((await call(base,`/api/rooms/${room.code}/control`,{action:'start'},'bad')).status,400);
   assert.equal((await call(base,`/api/rooms/${room.code}/control`,{action:'start'},room.hostToken)).status,200);
-  const v=await call(base,`/api/rooms/${room.code}`);assert.equal(v.data.players.length,20);assert.ok(!JSON.stringify(v.data).includes('correct'));
+  const v=await call(base,`/api/rooms/${room.code}`);assert.equal(v.data.players.length,3);assert.ok(!JSON.stringify(v.data).includes('correct'));
   assert.equal(v.data.phase,'countdown');assert.equal(v.data.teams.length,3);
   await new Promise(resolve=>setTimeout(resolve,3050));
   const answers=await Promise.all(joined.map(p=>call(base,`/api/rooms/${room.code}/answer`,{q:0,choice:1},p.data.token)));
