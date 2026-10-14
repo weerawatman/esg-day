@@ -272,3 +272,11 @@ body.room-mode .ranking-list.many-teams .team-icon { padding: 6px; }
   .registration-teams { flex-wrap: wrap; }
   .room-mode .host-wait { width: 100%; text-align: center; font-size: 14px; }
 }
+
+/* The longer "Data Governance & Data Security" brand stays compact on phones. */
+@media (max-width: 600px) {
+  body .brand, body.room-mode .brand { font-size: 14px; line-height: 1.25; gap: 10px; }
+  body .brand-icon, body.room-mode .brand-icon { flex-shrink: 0; }
+  body .connection, body.room-mode .connection { white-space: nowrap; font-size: 12px; }
+}
+.brand-line { white-space: nowrap; }
