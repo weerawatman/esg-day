@@ -19,7 +19,7 @@ try {
  await page.getByRole('button',{name:/เปิดห้องกิจกรรม/}).click();await page.waitForURL(/host=/);
  const code=new URL(page.url()).searchParams.get('host');
  let loseFirstJoin=true;await player.route('**/api/rooms/*/join',async route=>{if(loseFirstJoin){loseFirstJoin=false;await route.fetch();await route.abort('failed')}else await route.continue()});
- await player.goto(`${base}/?join=${code}`);await player.getByLabel('รหัสพนักงาน',{exact:true}).fill('EMP0');await player.getByLabel('ชื่อเล่นที่เพื่อนจะเห็น').fill('มายด์');await player.getByLabel('ชื่อทีม',{exact:true}).fill('ทีมดาวเหนือ');await player.getByRole('button',{name:/ตั้งชื่อทีมแล้วเข้าเล่น/}).click();
+ await player.goto(`${base}/?join=${code}`);assert.equal(await player.getByLabel('รหัสพนักงาน',{exact:true}).count(),0,'sign-in asks only for a team name');assert.equal(await player.getByLabel('ชื่อเล่นที่เพื่อนจะเห็น').count(),0);await player.getByLabel('ชื่อทีม',{exact:true}).fill('ทีมดาวเหนือ');await player.getByRole('button',{name:/ตั้งชื่อทีมแล้วเข้าเล่น/}).click();
  await player.locator('#toast.visible').waitFor();await player.getByRole('button',{name:/ตั้งชื่อทีมแล้วเข้าเล่น/}).click();
  await player.getByRole('button',{name:'พร้อมลุยกับทีมนี้!'}).click();
  await player.getByText('คุณอยู่ทีม').waitFor({timeout:8000});
@@ -32,12 +32,12 @@ try {
  assert.equal(await page.getByText('ทีมดาวเหนือ',{exact:true}).count(),1);
  assert.equal(await page.locator('#base-url').inputValue(),'http://192.168.1.123:3000','unsaved QR address survives new joins');
  assert.equal(await page.locator('.network').evaluate(el=>el.open),true,'network details remains open');
- await page.locator('.network summary').click();await page.getByLabel('เวลาตอบแต่ละข้อ').selectOption('30');await screenshot(page,'host-lobby');await screenshot(player,'player-lobby');
+ await page.locator('.network summary').click();await page.getByLabel('เวลาตอบแต่ละข้อ').selectOption('15');await screenshot(page,'host-lobby');await screenshot(player,'player-lobby');
  const publicScreen=await host.newPage();publicScreen.on('pageerror',e=>errors.push(e.message));await publicScreen.goto(`${base}/?screen=${code}`);await publicScreen.getByText('รวมทีม เตรียมลุย!',{exact:true}).waitFor();assert.equal(await publicScreen.locator('[data-control]').count(),0);
  await page.getByRole('button',{name:/เริ่มภารกิจ/}).click();
  await page.locator('#intro-count').waitFor();await screenshot(page,'intro-countdown');
  await player.locator('[data-choice="1"]').waitFor();await screenshot(page,'live-question');await screenshot(player,'live-question-mobile');
- await page.locator('.office-scene').waitFor();await player.locator('.office-scene').waitFor();
+ await page.locator('.office-scene').waitFor();await player.locator('.office-scene').waitFor({state:'attached'});assert.equal(await player.locator('.office-scene').isVisible(),false,'phones keep the office prop on the shared screen');
  assert.equal(await page.locator('.source-slides').count(),0,'no source attribution before reveal');
  await overflow(player);await overflow(page);
  await page.getByRole('button',{name:'♪ เปิดเสียง',exact:true}).click();assert.equal(await page.getByRole('button',{name:'♪ ปิดเสียง',exact:true}).getAttribute('aria-pressed'),'true');
@@ -48,11 +48,12 @@ try {
  await player.reload();await player.getByText(`ส่งคำตอบ ${firstLetter} แล้ว`,{exact:false}).waitFor();
  const hostToken=await page.evaluate(c=>localStorage.getItem(`dg:host:${c}`),code);
  for(const p of others)await call(`/api/rooms/${code}/answer`,{q:0,choice:firstAnswer},p.token);
- await page.locator('.suspense-panel .answer-chart').waitFor();
+ assert.equal(await page.getByRole('button',{name:/ปิดรับคำตอบ/}).count(),0,'host cannot cut the timer short');
+ await page.locator('.suspense-panel .answer-chart').waitFor({timeout:20000});
  assert.equal(await page.locator('.option.correct').count(),0,'histogram does not reveal the solution');
  await screenshot(page,'closed-suspense');
- await page.getByRole('button',{name:/เปิดเฉลยและให้คะแนน/}).click();await player.getByText('+1 คะแนนให้ทีม',{exact:false}).waitFor();
- await page.locator('.perfect-teams').waitFor();assert.equal(await page.locator('.perfect-teams > span').count(),3);
+ await page.getByRole('button',{name:/เปิดเฉลยและให้คะแนน/}).click();await player.getByText('+2 คะแนน (ถูก + โบนัสเร็วสุด)',{exact:false}).waitFor();
+ await page.locator('.fastest-team').waitFor();assert.equal(await page.locator('.fastest-team > span').count(),1,'only the first correct team earns the speed bonus');
  await page.locator('.source-slides').waitFor();
  await screenshot(page,'host-reveal');await screenshot(player,'player-reveal');await overflow(player);
  await page.getByRole('button',{name:/ลุ้นอันดับทีม/}).click();await page.locator('.ranking-list').waitFor();await screenshot(page,'leaderboard');await player.locator('.ranking-list').waitFor();await screenshot(player,'leaderboard-mobile');await overflow(player);
@@ -61,9 +62,10 @@ try {
  for(let q=1;q<10;q++){
   let current;do{current=await call(`/api/rooms/${code}`);if(current.phase==='countdown')await new Promise(resolve=>setTimeout(resolve,100))}while(current.phase==='countdown');
   await player.waitForFunction(text=>document.querySelector('.question-spotlight h2')?.textContent===text,current.question.text);
-  await player.locator('.office-scene').waitFor();await overflow(player);
+  await player.locator('.office-scene').waitFor({state:'attached'});await overflow(player);
   await screenshot(player,`mission-${q+1}-mobile`);
   for(const p of [{token:playerToken},...others])await call(`/api/rooms/${code}/answer`,{q,choice:questions.find(item=>item.text===current.question.text).correct},p.token);
+  do{await new Promise(resolve=>setTimeout(resolve,250));current=await call(`/api/rooms/${code}`)}while(current.phase!=='closed');
   await call(`/api/rooms/${code}/control`,{action:'reveal'},hostToken);
   await call(`/api/rooms/${code}/control`,{action:'leaderboard'},hostToken);
   await call(`/api/rooms/${code}/control`,{action:'next'},hostToken);
@@ -72,8 +74,8 @@ try {
  await player.getByText('ภารกิจสำเร็จ!',{exact:true}).waitFor();await screenshot(player,'winner-mobile');await overflow(player);
  const downloadEvent=page.waitForEvent('download');await page.getByRole('button',{name:/ดาวน์โหลดผล/}).click();const download=await downloadEvent;assert.match(download.suggestedFilename(),new RegExp(code));
  await page.getByRole('button',{name:/เปิดห้องสำหรับกลุ่มถัดไป/}).click();await page.waitForURL(url=>url.searchParams.get('host')!==code);assert.notEqual(new URL(page.url()).searchParams.get('host'),code);
- const final=await call(`/api/rooms/${code}`);assert.equal(final.total,10);assert.deepEqual(final.teams.map(t=>t.count),[1,1,1]);assert.ok(final.teams.every(t=>t.percent===100&&t.score===10&&t.rank===1));assert.ok(final.players.every(p=>p.employeeId===undefined));
- await page.goto(base);await page.getByRole('button',{name:/ลองเล่นโหมดสาธิต/}).click();await page.waitForURL(/host=/);await page.getByRole('button',{name:/เริ่มภารกิจ/}).click();await page.getByRole('button',{name:/เปิดเฉลยและให้คะแนน/}).waitFor({timeout:12000});
+ const final=await call(`/api/rooms/${code}`);assert.equal(final.total,10);assert.deepEqual(final.teams.map(t=>t.count),[1,1,1]);assert.deepEqual(final.teams.map(t=>t.score).sort((a,b)=>a-b),[10,10,20],'the always-first team adds +1 speed bonus on all ten questions');assert.equal(final.teams.find(t=>t.score===20).rank,1);assert.ok(final.players.every(p=>p.employeeId===undefined));
+ await page.goto(base);await page.getByRole('button',{name:/ลองเล่นโหมดสาธิต/}).click();await page.waitForURL(/host=/);await page.getByRole('button',{name:/เริ่มภารกิจ/}).click();await page.getByRole('button',{name:/เปิดเฉลยและให้คะแนน/}).waitFor({timeout:45000});
  await screenshot(page,'demo-question');assert.deepEqual(errors,[]);
- console.log('PASS: representative sign-in with lost-response retry, named teams, three players, 3-2-1, live timer, audio toggle, 10 questions, histogram, leaderboard, refresh, export, new room, demo, public screen, mobile layouts.');
+ console.log('PASS: representative sign-in with lost-response retry, named teams, three players, 3-2-1, full-length timer, speed bonus, audio toggle, 10 questions, histogram, leaderboard, refresh, export, new room, demo, public screen, mobile layouts.');
 } finally {await browser.close()}
