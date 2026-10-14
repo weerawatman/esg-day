@@ -280,3 +280,17 @@ body.room-mode .ranking-list.many-teams .team-icon { padding: 6px; }
   body .connection, body.room-mode .connection { white-space: nowrap; font-size: 12px; }
 }
 .brand-line { white-space: nowrap; }
+
+/* Lobby scan target: a large QR with the room code beside it, readable from across the room. */
+@media (min-width: 901px) {
+  body.room-mode #app[data-phase="lobby"] .qr-panel { display: grid; grid-template-columns: auto auto; grid-auto-rows: auto; align-content: center; align-items: center; justify-items: center; column-gap: clamp(16px, 1.8vw, 36px); row-gap: 6px; padding: clamp(12px, 1.6vh, 24px); }
+  body.room-mode #app[data-phase="lobby"] .qr-panel img { grid-column: 1; grid-row: 1 / span 3; width: clamp(230px, min(36vh, 24vw), 460px); }
+  body.room-mode #app[data-phase="lobby"] .qr-panel > :not(img) { grid-column: 2; }
+  body.room-mode #app[data-phase="lobby"] .qr-panel > span { font-size: clamp(16px, 1.1vw, 22px); align-self: end; }
+  body.room-mode #app[data-phase="lobby"] .qr-panel strong { font-size: clamp(40px, min(4vw, 7vh), 76px); letter-spacing: 6px; }
+  body.room-mode #app[data-phase="lobby"] .qr-panel .text-button { align-self: start; }
+  body.room-mode #app[data-phase="lobby"] .teams-grid { flex-basis: 170px; min-height: 170px; }
+}
+@media (max-width: 900px) {
+  body.room-mode .qr-panel img { width: min(260px, 70vw); }
+}
